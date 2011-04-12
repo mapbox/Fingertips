@@ -9,7 +9,7 @@
 
 @interface DSFingerTipWindow : UIWindow
 {
-    UIWindow *overlay;
+    UIWindow *overlayWindow;
     NSMutableDictionary *touches;
     BOOL active;
     UIImage *touchImage;

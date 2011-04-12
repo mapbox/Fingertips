@@ -58,14 +58,13 @@
 
 - (void)DSFingerTipWindow_commonInit
 {
-    overlay = [[UIWindow alloc] initWithFrame:self.frame];
+    overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
     
-    overlay.userInteractionEnabled = NO;
-    overlay.windowLevel = UIWindowLevelStatusBar;
-    overlay.backgroundColor = [UIColor clearColor];
-    
-    [overlay makeKeyAndVisible];
-    
+    overlayWindow.userInteractionEnabled = NO;
+    overlayWindow.windowLevel = UIWindowLevelStatusBar;
+    overlayWindow.backgroundColor = [UIColor clearColor];
+    overlayWindow.hidden = NO;
+
     touches      = [[NSMutableDictionary dictionary] retain];
     active       = [[UIScreen screens] count] > 1 ? YES : NO;
     touchAlpha   = 0.5;
@@ -91,7 +90,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidConnectNotification    object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidDisconnectNotification object:nil];
     
-    [overlay release];
+    [overlayWindow release];
     [touches release];
     [touchImage release];
 
@@ -205,7 +204,7 @@
                 }
                 else if ([touch phase] == UITouchPhaseMoved)
                 {
-                    touchView.center = [touch locationInView:overlay];
+                    touchView.center = [touch locationInView:overlayWindow];
                 }
             }
             else if ([touch phase] == UITouchPhaseBegan)
@@ -214,9 +213,9 @@
                 
                 touchView.alpha = self.touchAlpha;
                 
-                [overlay addSubview:touchView];
+                [overlayWindow addSubview:touchView];
                 
-                touchView.center = [touch locationInView:overlay];
+                touchView.center = [touch locationInView:overlayWindow];
                 
                 [touches setObject:touchView forKey:hash];
             }
