@@ -9,7 +9,7 @@
 
 @interface DSFingerTipWindow (DSFingerTipWindowPrivate)
 
-- (void)setup;
+- (void)DSFingerTipWindow_commonInit;
 
 @end
 
@@ -28,7 +28,7 @@
     self = [super initWithCoder:decoder];
 
     if (self != nil)
-        [self setup];
+        [self DSFingerTipWindow_commonInit];
     
     return self;
 }
@@ -40,12 +40,12 @@
     self = [super initWithFrame:rect];
     
     if (self != nil)
-        [self setup];
+        [self DSFingerTipWindow_commonInit];
     
     return self;
 }
 
-- (void)setup
+- (void)DSFingerTipWindow_commonInit
 {
     overlay = [[UIWindow alloc] initWithFrame:self.frame];
     
