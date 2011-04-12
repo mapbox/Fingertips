@@ -10,11 +10,11 @@
 @interface DSFingerTipWindow : UIWindow
 {
     UIWindow *overlayWindow;
-    NSMutableDictionary *touches;
     BOOL active;
     UIImage *touchImage;
     CGFloat touchAlpha;
     NSTimeInterval fadeDuration;
+    BOOL fingerTipRemovalScheduled;
 }
 
 @property (nonatomic, retain) UIImage *touchImage;

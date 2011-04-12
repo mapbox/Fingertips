@@ -15,12 +15,34 @@
     #define DEBUG_FINGERTIP_WINDOW 0
 #endif
 
+@interface DSFingerTipView : UIImageView
+{
+    NSTimeInterval timestamp;
+    BOOL shouldAutomaticallyRemoveAfterTimeout;
+    BOOL fadingOut;
+}
+
+@property (nonatomic, assign) NSTimeInterval timestamp;
+@property (nonatomic, assign) BOOL shouldAutomaticallyRemoveAfterTimeout;
+@property (nonatomic, assign, getter=isFadingOut) BOOL fadingOut;
+
+@end
+
+#pragma mark -
+
 @interface DSFingerTipWindow (DSFingerTipWindowPrivate)
 
 - (void)DSFingerTipWindow_commonInit;
 
 - (BOOL)anyScreenIsMirrored;
 - (void)updateFingertipsAreActive;
+
+- (void)scheduleFingerTipRemoval;
+- (void)cancelScheduledFingerTipRemoval;
+- (void)removeInactiveFingerTips;
+
+- (void)removeFingerTipWithHash:(NSUInteger)hash animated:(BOOL)animated;
+- (BOOL)shouldAutomaticallyRemoveFingerTipForTouch:(UITouch *)touch;
 
 @end
 
@@ -65,7 +87,6 @@
     overlayWindow.backgroundColor = [UIColor clearColor];
     overlayWindow.hidden = NO;
 
-    touches      = [[NSMutableDictionary dictionary] retain];
     active       = [[UIScreen screens] count] > 1 ? YES : NO;
     touchAlpha   = 0.5;
     fadeDuration = 0.3;
@@ -91,7 +112,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidDisconnectNotification object:nil];
     
     [overlayWindow release];
-    [touches release];
     [touchImage release];
 
     [super dealloc];
@@ -178,51 +198,174 @@
         
         for (UITouch *touch in [allTouches allObjects])
         {
-            NSNumber *hash = [NSNumber numberWithUnsignedInteger:[touch hash]];
-            
-            if ([touches objectForKey:hash])
+            switch (touch.phase)
             {
-                UIImageView *touchView = [touches objectForKey:hash];
-                
-                if ([touch phase] == UITouchPhaseEnded || [touch phase] == UITouchPhaseCancelled)
+                case UITouchPhaseBegan:
+                case UITouchPhaseMoved:
+                case UITouchPhaseStationary:
                 {
-                    [UIView beginAnimations:nil context:nil];
-                    [UIView setAnimationDuration:self.fadeDuration];
-                    
-                    touchView.frame = CGRectMake(touchView.center.x - touchView.frame.size.width, 
-                                                 touchView.center.y - touchView.frame.size.height, 
-                                                 touchView.frame.size.width  * 2, 
-                                                 touchView.frame.size.height * 2);
+                    DSFingerTipView *touchView = (DSFingerTipView *)[overlayWindow viewWithTag:touch.hash];
 
-                    touchView.alpha = 0.0;
+                    if (touch.phase != UITouchPhaseStationary && touchView != nil && [touchView isFadingOut])
+                    {
+                        [touchView removeFromSuperview];
+                        touchView = nil;
+                    }
                     
-                    [UIView commitAnimations];
-                
-                    [touchView performSelector:@selector(removeFromSuperview) withObject:nil afterDelay:self.fadeDuration];
-                    
-                    [touches removeObjectForKey:hash];
+                    if (touchView == nil && touch.phase != UITouchPhaseStationary)
+                    {
+                        touchView = [[[DSFingerTipView alloc] initWithImage:self.touchImage] autorelease];
+                        [overlayWindow addSubview:touchView];
+                    }
+            
+                    if ( ! [touchView isFadingOut])
+                    {
+                        touchView.alpha = self.touchAlpha;
+                        touchView.center = [touch locationInView:overlayWindow];
+                        touchView.tag = touch.hash;
+                        touchView.timestamp = touch.timestamp;
+                        touchView.shouldAutomaticallyRemoveAfterTimeout = [self shouldAutomaticallyRemoveFingerTipForTouch:touch];
+                    }
+                    break;
                 }
-                else if ([touch phase] == UITouchPhaseMoved)
+
+                case UITouchPhaseEnded:
+                case UITouchPhaseCancelled:
                 {
-                    touchView.center = [touch locationInView:overlayWindow];
+                    [self removeFingerTipWithHash:touch.hash animated:YES];
+                    break;
                 }
-            }
-            else if ([touch phase] == UITouchPhaseBegan)
-            {
-                UIImageView *touchView = [[[UIImageView alloc] initWithImage:self.touchImage] autorelease];
-                
-                touchView.alpha = self.touchAlpha;
-                
-                [overlayWindow addSubview:touchView];
-                
-                touchView.center = [touch locationInView:overlayWindow];
-                
-                [touches setObject:touchView forKey:hash];
             }
         }
     }
-    
+        
     [super sendEvent:event];
+
+    [self scheduleFingerTipRemoval]; // We may not see all UITouchPhaseEnded/UITouchPhaseCancelled events
 }
+
+#pragma mark -
+#pragma mark Private
+
+- (void)scheduleFingerTipRemoval
+{
+    if (fingerTipRemovalScheduled)
+        return;
+    
+    fingerTipRemovalScheduled = YES;
+    [self performSelector:@selector(removeInactiveFingerTips) withObject:nil afterDelay:0.1];
+}
+
+- (void)cancelScheduledFingerTipRemoval
+{
+    fingerTipRemovalScheduled = YES;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(removeInactiveFingerTips) object:nil];
+}
+
+- (void)removeInactiveFingerTips
+{
+    fingerTipRemovalScheduled = NO;
+
+    NSTimeInterval now = [[NSProcessInfo processInfo] systemUptime];
+    const CGFloat REMOVAL_DELAY = 0.2;
+
+    for (DSFingerTipView *touchView in [overlayWindow subviews])
+    {
+        NSAssert([touchView isKindOfClass:[DSFingerTipView class]], @"Unexpected touch view.");
+        
+        if (touchView.shouldAutomaticallyRemoveAfterTimeout && now > touchView.timestamp + REMOVAL_DELAY)
+            [self removeFingerTipWithHash:touchView.tag animated:YES];
+    }
+
+    if ([[overlayWindow subviews] count] > 0)
+        [self scheduleFingerTipRemoval];
+}
+
+- (void)removeFingerTipWithHash:(NSUInteger)hash animated:(BOOL)animated;
+{
+    DSFingerTipView *touchView = (DSFingerTipView *)[overlayWindow viewWithTag:hash];
+    if (touchView == nil)
+        return;
+    
+    NSAssert([touchView isKindOfClass:[DSFingerTipView class]], @"Unexpected touch view.");
+    
+    if ([touchView isFadingOut])
+        return;
+        
+    BOOL animationsWereEnabled = [UIView areAnimationsEnabled];
+
+    if (animated)
+    {
+        [UIView setAnimationsEnabled:YES];
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:self.fadeDuration];
+    }
+
+    touchView.frame = CGRectMake(touchView.center.x - touchView.frame.size.width, 
+                                 touchView.center.y - touchView.frame.size.height, 
+                                 touchView.frame.size.width  * 2, 
+                                 touchView.frame.size.height * 2);
+    
+    touchView.alpha = 0.0;
+
+    if (animated)
+    {
+        [UIView commitAnimations];
+        [UIView setAnimationsEnabled:animationsWereEnabled];
+    }
+    
+    touchView.fadingOut = YES;
+    [touchView performSelector:@selector(removeFromSuperview) withObject:nil afterDelay:self.fadeDuration];
+}
+
+- (BOOL)shouldAutomaticallyRemoveFingerTipForTouch:(UITouch *)touch;
+{
+    // We don't reliably get UITouchPhaseEnded or UITouchPhaseCancelled
+    // events via -sendEvent: for certain touch events. Known cases
+    // include swipe to delete on a table view row, and tap to cancel
+    // swipe to delete We automatically remove their associated
+    // fingertips after a suitable timeout.
+    //
+    // It would be much nicer if we could remove all touch events after
+    // a suitable time out, but then we'll prematurely remove touch and
+    // hold events that are picked up by gesture recognizers (since we
+    // don't use UITouchPhaseStationary touches for those. *sigh*. So we
+    // end up with this more complicated setup.
+
+    UIView *view = [touch view];
+    view = [view hitTest:[touch locationInView:view] withEvent:nil];
+
+    while (view != nil)
+    {
+        if ([view isKindOfClass:[UITableViewCell class]])
+        {
+            for (UIGestureRecognizer *recognizer in [touch gestureRecognizers])
+            {
+                if ([recognizer isKindOfClass:[UISwipeGestureRecognizer class]])
+                    return YES;
+            }
+        }
+
+        if ([view isKindOfClass:[UITableView class]])
+        {
+            if ([[touch gestureRecognizers] count] == 0)
+                return YES;
+        }
+
+        view = view.superview;
+    }
+
+    return NO;
+}
+
+@end
+
+#pragma mark -
+
+@implementation DSFingerTipView
+
+@synthesize timestamp;
+@synthesize shouldAutomaticallyRemoveAfterTimeout;
+@synthesize fadingOut;
 
 @end
