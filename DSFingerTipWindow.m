@@ -9,8 +9,11 @@
 
 // Turn this on to debug touchs in during development
 //
-#define DEBUG_FINGERTIP_WINDOW 0
-//#define DEBUG_FINGERTIP_WINDOW TARGET_IPHONE_SIMULATOR
+#ifdef TARGET_IPHONE_SIMULATOR
+    #define DEBUG_FINGERTIP_WINDOW 1
+#else
+    #define DEBUG_FINGERTIP_WINDOW 0
+#endif
 
 @interface DSFingerTipWindow (DSFingerTipWindowPrivate)
 
@@ -77,7 +80,7 @@
                                              selector:@selector(screenDisconnect:)
                                                  name:UIScreenDidDisconnectNotification
                                                object:nil];
-    
+
     // Set up active now, in case the screen was present before the window was created (or application launched)
     //
     [self updateFingertipsAreActive];
