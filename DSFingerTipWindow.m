@@ -7,9 +7,17 @@
 
 #import "DSFingerTipWindow.h"
 
+// Turn this on to debug touchs in during development
+//
+#define DEBUG_FINGERTIP_WINDOW 0
+//#define DEBUG_FINGERTIP_WINDOW TARGET_IPHONE_SIMULATOR
+
 @interface DSFingerTipWindow (DSFingerTipWindowPrivate)
 
 - (void)DSFingerTipWindow_commonInit;
+
+- (BOOL)anyScreenIsMirrored;
+- (void)updateFingertipsAreActive;
 
 @end
 
@@ -69,6 +77,10 @@
                                              selector:@selector(screenDisconnect:)
                                                  name:UIScreenDidDisconnectNotification
                                                object:nil];
+    
+    // Set up active now, in case the screen was present before the window was created (or application launched)
+    //
+    [self updateFingertipsAreActive];
 }
 
 - (void)dealloc
@@ -118,18 +130,43 @@
 }
 
 #pragma mark -
+#pragma mark Screen notifications
 
 - (void)screenConnect:(NSNotification *)notification
 {
-    active = YES;
+    [self updateFingertipsAreActive];
 }
 
 - (void)screenDisconnect:(NSNotification *)notification
 {
-    active = [[UIScreen screens] count] > 1 ? YES : NO;
+    [self updateFingertipsAreActive];
+}
+
+- (BOOL)anyScreenIsMirrored
+{
+    if ( ! [UIScreen instancesRespondToSelector:@selector(mirroredScreen)])
+        return NO;
+
+    for (UIScreen *screen in [UIScreen screens])
+    {
+        if (screen.mirroredScreen != nil)
+            return YES;
+    }
+
+    return NO;
+}
+
+- (void)updateFingertipsAreActive;
+{
+#if DEBUG_FINGERTIP_WINDOW
+    active = YES;
+#else
+    active = [self anyScreenIsMirrored];
+#endif    
 }
 
 #pragma mark -
+#pragma mark UIWindow overrides
 
 - (void)sendEvent:(UIEvent *)event
 {
