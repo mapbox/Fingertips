@@ -7,7 +7,7 @@
 
 #import "DSFingerTipWindow.h"
 
-// Turn this on to debug touchs in during development
+// Turn this on to debug touches during development.
 //
 #ifdef TARGET_IPHONE_SIMULATOR
     #define DEBUG_FINGERTIP_WINDOW 0
@@ -56,7 +56,7 @@
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
-    // this covers NIB-loaded windows
+    // This covers NIB-loaded windows.
     //
     self = [super initWithCoder:decoder];
 
@@ -68,7 +68,7 @@
 
 - (id)initWithFrame:(CGRect)rect
 {
-    // this covers programmatically-created windows
+    // This covers programmatically-created windows.
     //
     self = [super initWithFrame:rect];
     
@@ -87,7 +87,6 @@
     overlayWindow.backgroundColor = [UIColor clearColor];
     overlayWindow.hidden = NO;
 
-    active       = [[UIScreen screens] count] > 1 ? YES : NO;
     touchAlpha   = 0.5;
     fadeDuration = 0.3;
     
@@ -101,7 +100,7 @@
                                                  name:UIScreenDidDisconnectNotification
                                                object:nil];
 
-    // Set up active now, in case the screen was present before the window was created (or application launched)
+    // Set up active now, in case the screen was present before the window was created (or application launched).
     //
     [self updateFingertipsAreActive];
 }
@@ -171,7 +170,7 @@
 
     for (UIScreen *screen in [UIScreen screens])
     {
-        if (screen.mirroredScreen != nil)
+        if ([screen valueForKey:@"mirroredScreen"] != nil)
             return YES;
     }
 
@@ -241,7 +240,7 @@
         
     [super sendEvent:event];
 
-    [self scheduleFingerTipRemoval]; // We may not see all UITouchPhaseEnded/UITouchPhaseCancelled events
+    [self scheduleFingerTipRemoval]; // We may not see all UITouchPhaseEnded/UITouchPhaseCancelled events.
 }
 
 #pragma mark -
@@ -322,14 +321,14 @@
 {
     // We don't reliably get UITouchPhaseEnded or UITouchPhaseCancelled
     // events via -sendEvent: for certain touch events. Known cases
-    // include swipe to delete on a table view row, and tap to cancel
-    // swipe to delete We automatically remove their associated
+    // include swipe-to-delete on a table view row, and tap-to-cancel
+    // swipe to delete. We automatically remove their associated
     // fingertips after a suitable timeout.
     //
     // It would be much nicer if we could remove all touch events after
     // a suitable time out, but then we'll prematurely remove touch and
     // hold events that are picked up by gesture recognizers (since we
-    // don't use UITouchPhaseStationary touches for those. *sigh*. So we
+    // don't use UITouchPhaseStationary touches for those. *sigh*). So we
     // end up with this more complicated setup.
 
     UIView *view = [touch view];
