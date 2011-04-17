@@ -15,6 +15,14 @@
     #define DEBUG_FINGERTIP_WINDOW 0
 #endif
 
+#ifndef __IPHONE_4_3
+	@interface UIScreen (UIKit_4_3_API)
+	
+	@property(nonatomic,readonly,retain) UIScreen *mirroredScreen;
+	
+	@end
+#endif
+
 @interface DSFingerTipView : UIImageView
 {
     NSTimeInterval timestamp;
@@ -170,7 +178,7 @@
 
     for (UIScreen *screen in [UIScreen screens])
     {
-        if ([screen valueForKey:@"mirroredScreen"] != nil)
+        if (screen.mirroredScreen != nil)
             return YES;
     }
 
