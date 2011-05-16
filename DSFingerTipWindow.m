@@ -170,7 +170,7 @@
 
     for (UIScreen *screen in [UIScreen screens])
     {
-        if ([screen valueForKey:@"mirroredScreen"] != nil) // use key path for pre-4.3 compatibility
+        if ([screen mirroredScreen] != nil)
             return YES;
     }
 
