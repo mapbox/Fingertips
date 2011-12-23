@@ -6,6 +6,8 @@ Just drop in our replacement `UIWindow` subclass and your app will automatically
 
 Here's a [demo video](http://vimeo.com/22136667).
 
+There is an ARC-capable dev branch happening over on `dev-arc` that will eventually becomes `master`. 
+
 ## Configuration
 
 You shouldn't need to configure anything, but if you want to tweak some knobs: 
