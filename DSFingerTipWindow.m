@@ -16,11 +16,6 @@
 #endif
 
 @interface DSFingerTipView : UIImageView
-{
-    NSTimeInterval timestamp;
-    BOOL shouldAutomaticallyRemoveAfterTimeout;
-    BOOL fadingOut;
-}
 
 @property (nonatomic, assign) NSTimeInterval timestamp;
 @property (nonatomic, assign) BOOL shouldAutomaticallyRemoveAfterTimeout;
@@ -30,17 +25,18 @@
 
 #pragma mark -
 
-@interface DSFingerTipWindow (DSFingerTipWindowPrivate)
+@interface DSFingerTipWindow ()
+
+@property (nonatomic, strong) UIWindow *overlayWindow;
+@property (nonatomic, assign) BOOL active;
+@property (nonatomic, assign) BOOL fingerTipRemovalScheduled;
 
 - (void)DSFingerTipWindow_commonInit;
-
 - (BOOL)anyScreenIsMirrored;
 - (void)updateFingertipsAreActive;
-
 - (void)scheduleFingerTipRemoval;
 - (void)cancelScheduledFingerTipRemoval;
 - (void)removeInactiveFingerTips;
-
 - (void)removeFingerTipWithHash:(NSUInteger)hash animated:(BOOL)animated;
 - (BOOL)shouldAutomaticallyRemoveFingerTipForTouch:(UITouch *)touch;
 
@@ -53,6 +49,9 @@
 @synthesize touchImage;
 @synthesize touchAlpha;
 @synthesize fadeDuration;
+@synthesize overlayWindow;
+@synthesize active;
+@synthesize fingerTipRemovalScheduled;
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -109,11 +108,6 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidConnectNotification    object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidDisconnectNotification object:nil];
-    
-    [overlayWindow release];
-    [touchImage release];
-
-    [super dealloc];
 }
 
 #pragma mark -
@@ -142,7 +136,7 @@
         
         [clipPath addClip];
         
-        touchImage = [UIGraphicsGetImageFromCurrentImageContext() retain];
+        touchImage = UIGraphicsGetImageFromCurrentImageContext();
         
         UIGraphicsEndImageContext();
     }
@@ -180,9 +174,9 @@
 - (void)updateFingertipsAreActive;
 {
 #if DEBUG_FINGERTIP_WINDOW
-    active = YES;
+    self.active = YES;
 #else
-    active = [self anyScreenIsMirrored];
+    self.active = [self anyScreenIsMirrored];
 #endif    
 }
 
@@ -191,7 +185,7 @@
 
 - (void)sendEvent:(UIEvent *)event
 {
-    if (active)
+    if (self.active)
     {
         NSSet *allTouches = [event allTouches];
         
@@ -203,7 +197,7 @@
                 case UITouchPhaseMoved:
                 case UITouchPhaseStationary:
                 {
-                    DSFingerTipView *touchView = (DSFingerTipView *)[overlayWindow viewWithTag:touch.hash];
+                    DSFingerTipView *touchView = (DSFingerTipView *)[self.overlayWindow viewWithTag:touch.hash];
 
                     if (touch.phase != UITouchPhaseStationary && touchView != nil && [touchView isFadingOut])
                     {
@@ -213,14 +207,14 @@
                     
                     if (touchView == nil && touch.phase != UITouchPhaseStationary)
                     {
-                        touchView = [[[DSFingerTipView alloc] initWithImage:self.touchImage] autorelease];
-                        [overlayWindow addSubview:touchView];
+                        touchView = [[DSFingerTipView alloc] initWithImage:self.touchImage];
+                        [self.overlayWindow addSubview:touchView];
                     }
             
                     if ( ! [touchView isFadingOut])
                     {
                         touchView.alpha = self.touchAlpha;
-                        touchView.center = [touch locationInView:overlayWindow];
+                        touchView.center = [touch locationInView:self.overlayWindow];
                         touchView.tag = touch.hash;
                         touchView.timestamp = touch.timestamp;
                         touchView.shouldAutomaticallyRemoveAfterTimeout = [self shouldAutomaticallyRemoveFingerTipForTouch:touch];
@@ -248,27 +242,27 @@
 
 - (void)scheduleFingerTipRemoval
 {
-    if (fingerTipRemovalScheduled)
+    if (self.fingerTipRemovalScheduled)
         return;
     
-    fingerTipRemovalScheduled = YES;
+    self.fingerTipRemovalScheduled = YES;
     [self performSelector:@selector(removeInactiveFingerTips) withObject:nil afterDelay:0.1];
 }
 
 - (void)cancelScheduledFingerTipRemoval
 {
-    fingerTipRemovalScheduled = YES;
+    self.fingerTipRemovalScheduled = YES;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(removeInactiveFingerTips) object:nil];
 }
 
 - (void)removeInactiveFingerTips
 {
-    fingerTipRemovalScheduled = NO;
+    self.fingerTipRemovalScheduled = NO;
 
     NSTimeInterval now = [[NSProcessInfo processInfo] systemUptime];
     const CGFloat REMOVAL_DELAY = 0.2;
 
-    for (DSFingerTipView *touchView in [overlayWindow subviews])
+    for (DSFingerTipView *touchView in [self.overlayWindow subviews])
     {
         NSAssert([touchView isKindOfClass:[DSFingerTipView class]], @"Unexpected touch view.");
         
@@ -276,13 +270,13 @@
             [self removeFingerTipWithHash:touchView.tag animated:YES];
     }
 
-    if ([[overlayWindow subviews] count] > 0)
+    if ([[self.overlayWindow subviews] count] > 0)
         [self scheduleFingerTipRemoval];
 }
 
 - (void)removeFingerTipWithHash:(NSUInteger)hash animated:(BOOL)animated;
 {
-    DSFingerTipView *touchView = (DSFingerTipView *)[overlayWindow viewWithTag:hash];
+    DSFingerTipView *touchView = (DSFingerTipView *)[self.overlayWindow viewWithTag:hash];
     if (touchView == nil)
         return;
     

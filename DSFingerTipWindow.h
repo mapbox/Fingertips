@@ -8,16 +8,8 @@
 #import <UIKit/UIKit.h>
 
 @interface DSFingerTipWindow : UIWindow
-{
-    UIWindow *overlayWindow;
-    BOOL active;
-    UIImage *touchImage;
-    CGFloat touchAlpha;
-    NSTimeInterval fadeDuration;
-    BOOL fingerTipRemovalScheduled;
-}
 
-@property (nonatomic, retain) UIImage *touchImage;
+@property (nonatomic, strong) UIImage *touchImage;
 @property (nonatomic, assign) CGFloat touchAlpha;
 @property (nonatomic, assign) NSTimeInterval fadeDuration;
 
