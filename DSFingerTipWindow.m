@@ -124,7 +124,7 @@
     {
         UIBezierPath *clipPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, 50.0, 50.0)];
         
-        UIGraphicsBeginImageContext(clipPath.bounds.size);
+        UIGraphicsBeginImageContextWithOptions(clipPath.bounds.size, NO, 0);
 
         UIBezierPath *drawPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(25.0, 25.0) 
                                                                 radius:22.0
