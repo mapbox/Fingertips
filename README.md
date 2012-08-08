@@ -6,7 +6,7 @@ Just drop in our replacement `UIWindow` subclass and your app will automatically
 
 Here's a [demo video](http://vimeo.com/22136667).
 
-There is an ARC-capable dev branch happening over on `dev-arc` that will eventually becomes `master`. 
+Fingertips requires iOS 5.0 or greater and ARC. 
 
 ## Configuration
 

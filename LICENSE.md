@@ -1,4 +1,4 @@
-Copyright (c) 2011, Development Seed, Inc.
+Copyright (c) 2011-2012, Development Seed, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
