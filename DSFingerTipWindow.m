@@ -128,9 +128,9 @@
 
         drawPath.lineWidth = 2.0;
         
-        [[UIColor blackColor] setStroke];
-        [[UIColor whiteColor] setFill];
-        
+        [[UIColor colorWithWhite:1. alpha:1.] setStroke];
+        [[UIColor colorWithWhite:1. alpha:.8] setFill];
+
         [drawPath stroke];
         [drawPath fill];
         
