@@ -81,8 +81,8 @@
 
 - (void)DSFingerTipWindow_commonInit
 {
-    _strokeColor = [UIColor blackColor];
-    _fillColor = [UIColor whiteColor];
+    strokeColor = [UIColor blackColor];
+    fillColor = [UIColor whiteColor];
     
     overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
     
@@ -133,8 +133,8 @@
 
         drawPath.lineWidth = 2.0;
         
-        [_strokeColor setStroke];
-        [_fillColor setFill];
+        [strokeColor setStroke];
+        [fillColor setFill];
 
         [drawPath stroke];
         [drawPath fill];
