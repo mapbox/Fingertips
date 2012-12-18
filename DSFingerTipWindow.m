@@ -52,6 +52,8 @@
 @synthesize overlayWindow;
 @synthesize active;
 @synthesize fingerTipRemovalScheduled;
+@synthesize fillColor;
+@synthesize strokeColor;
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -79,6 +81,9 @@
 
 - (void)DSFingerTipWindow_commonInit
 {
+    _strokeColor = [UIColor blackColor];
+    _fillColor = [UIColor whiteColor];
+    
     overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
     
     overlayWindow.userInteractionEnabled = NO;
@@ -128,9 +133,9 @@
 
         drawPath.lineWidth = 2.0;
         
-        [[UIColor blackColor] setStroke];
-        [[UIColor whiteColor] setFill];
-        
+        [_strokeColor setStroke];
+        [_fillColor setFill];
+
         [drawPath stroke];
         [drawPath fill];
         
