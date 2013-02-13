@@ -15,6 +15,8 @@ You shouldn't need to configure anything, but if you want to tweak some knobs:
  * `touchImage`: pass a `UIImage` to use for showing touches
  * `touchAlpha`: change the visible-touch alpha transparency
  * `fadeDuration`: change how long lifted touches fade out
+ * `strokeColor`: change default `touchImage` stroke color (defaults to black)
+ * `fillColor`: change default `touchImage` fill color (defaults to white)
 
 ## License
 

@@ -12,5 +12,7 @@
 @property (nonatomic, strong) UIImage *touchImage;
 @property (nonatomic, assign) CGFloat touchAlpha;
 @property (nonatomic, assign) NSTimeInterval fadeDuration;
+@property (nonatomic, strong) UIColor *strokeColor;
+@property (nonatomic, strong) UIColor *fillColor;
 
 @end
