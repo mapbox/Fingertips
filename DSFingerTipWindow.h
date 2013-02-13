@@ -2,7 +2,7 @@
 //  DSFingerTipWindow.h
 //
 //  Created by Justin R. Miller on 3/29/11.
-//  Copyright 2011-2012 Development Seed. All rights reserved.
+//  Copyright 2011-2013 Development Seed. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
