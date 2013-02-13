@@ -20,6 +20,6 @@ You shouldn't need to configure anything, but if you want to tweak some knobs:
 
 ## License
 
-Copyright (c) 2011-2012 Development Seed, Inc.
+Copyright (c) 2011-2013 Development Seed, Inc.
 
 The Fingertips library should be accompanied by a LICENSE file. This file contains the license relevant to this distribution. If no license exists, please contact [Development Seed](http://developmentseed.org).
