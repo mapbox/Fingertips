@@ -46,14 +46,7 @@
 
 @implementation DSFingerTipWindow
 
-@synthesize touchImage;
-@synthesize touchAlpha;
-@synthesize fadeDuration;
-@synthesize overlayWindow;
-@synthesize active;
-@synthesize fingerTipRemovalScheduled;
-@synthesize fillColor;
-@synthesize strokeColor;
+@synthesize touchImage=_touchImage;
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
@@ -81,18 +74,18 @@
 
 - (void)DSFingerTipWindow_commonInit
 {
-    strokeColor = [UIColor blackColor];
-    fillColor = [UIColor whiteColor];
+    self.strokeColor = [UIColor blackColor];
+    self.fillColor = [UIColor whiteColor];
     
-    overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
+    self.overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
     
-    overlayWindow.userInteractionEnabled = NO;
-    overlayWindow.windowLevel = UIWindowLevelStatusBar;
-    overlayWindow.backgroundColor = [UIColor clearColor];
-    overlayWindow.hidden = NO;
+    self.overlayWindow.userInteractionEnabled = NO;
+    self.overlayWindow.windowLevel = UIWindowLevelStatusBar;
+    self.overlayWindow.backgroundColor = [UIColor clearColor];
+    self.overlayWindow.hidden = NO;
 
-    touchAlpha   = 0.5;
-    fadeDuration = 0.3;
+    self.touchAlpha   = 0.5;
+    self.fadeDuration = 0.3;
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(screenConnect:)
@@ -119,7 +112,7 @@
 
 - (UIImage *)touchImage
 {
-    if ( ! touchImage)
+    if ( ! _touchImage)
     {
         UIBezierPath *clipPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, 50.0, 50.0)];
         
@@ -133,20 +126,20 @@
 
         drawPath.lineWidth = 2.0;
         
-        [strokeColor setStroke];
-        [fillColor setFill];
+        [self.strokeColor setStroke];
+        [self.fillColor setFill];
 
         [drawPath stroke];
         [drawPath fill];
         
         [clipPath addClip];
         
-        touchImage = UIGraphicsGetImageFromCurrentImageContext();
+        _touchImage = UIGraphicsGetImageFromCurrentImageContext();
         
         UIGraphicsEndImageContext();
     }
         
-    return touchImage;
+    return _touchImage;
 }
 
 #pragma mark -
@@ -361,9 +354,5 @@
 #pragma mark -
 
 @implementation DSFingerTipView
-
-@synthesize timestamp;
-@synthesize shouldAutomaticallyRemoveAfterTimeout;
-@synthesize fadingOut;
 
 @end
