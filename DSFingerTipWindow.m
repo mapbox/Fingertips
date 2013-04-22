@@ -262,7 +262,8 @@
 
     for (DSFingerTipView *touchView in [self.overlayWindow subviews])
     {
-        NSAssert([touchView isKindOfClass:[DSFingerTipView class]], @"Unexpected touch view.");
+        if ( ! [touchView isKindOfClass:[DSFingerTipView class]])
+            continue;
         
         if (touchView.shouldAutomaticallyRemoveAfterTimeout && now > touchView.timestamp + REMOVAL_DELAY)
             [self removeFingerTipWithHash:touchView.tag animated:YES];
@@ -275,10 +276,8 @@
 - (void)removeFingerTipWithHash:(NSUInteger)hash animated:(BOOL)animated;
 {
     DSFingerTipView *touchView = (DSFingerTipView *)[self.overlayWindow viewWithTag:hash];
-    if (touchView == nil)
+    if ( ! [touchView isKindOfClass:[DSFingerTipView class]])
         return;
-    
-    NSAssert([touchView isKindOfClass:[DSFingerTipView class]], @"Unexpected touch view.");
     
     if ([touchView isFadingOut])
         return;
