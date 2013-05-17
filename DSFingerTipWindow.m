@@ -7,6 +7,12 @@
 
 #import "DSFingerTipWindow.h"
 
+// This file must be built with ARC.
+//
+#if !__has_feature(objc_arc)
+    #error "ARC must be enabled for DSFingerTipWindow.m"
+#endif
+
 // Turn this on to debug touches during development.
 //
 #ifdef TARGET_IPHONE_SIMULATOR
