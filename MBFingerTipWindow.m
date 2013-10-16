@@ -1,27 +1,27 @@
 //
-//  DSFingerTipWindow.m
+//  MBFingerTipWindow.m
 //
 //  Created by Justin R. Miller on 3/29/11.
-//  Copyright 2011-2013 Development Seed. All rights reserved.
+//  Copyright 2011-2013 MapBox. All rights reserved.
 //
 
-#import "DSFingerTipWindow.h"
+#import "MBFingerTipWindow.h"
 
 // This file must be built with ARC.
 //
 #if !__has_feature(objc_arc)
-    #error "ARC must be enabled for DSFingerTipWindow.m"
+    #error "ARC must be enabled for MBFingerTipWindow.m"
 #endif
 
 // Turn this on to debug touches during development.
 //
 #ifdef TARGET_IPHONE_SIMULATOR
-    #define DEBUG_FINGERTIP_WINDOW 0
+    #define DEBUG_FINGERTIP_WINDOW 1
 #else
     #define DEBUG_FINGERTIP_WINDOW 0
 #endif
 
-@interface DSFingerTipView : UIImageView
+@interface MBFingerTipView : UIImageView
 
 @property (nonatomic, assign) NSTimeInterval timestamp;
 @property (nonatomic, assign) BOOL shouldAutomaticallyRemoveAfterTimeout;
@@ -31,13 +31,13 @@
 
 #pragma mark -
 
-@interface DSFingerTipWindow ()
+@interface MBFingerTipWindow ()
 
 @property (nonatomic, strong) UIWindow *overlayWindow;
 @property (nonatomic, assign) BOOL active;
 @property (nonatomic, assign) BOOL fingerTipRemovalScheduled;
 
-- (void)DSFingerTipWindow_commonInit;
+- (void)MBFingerTipWindow_commonInit;
 - (BOOL)anyScreenIsMirrored;
 - (void)updateFingertipsAreActive;
 - (void)scheduleFingerTipRemoval;
@@ -50,7 +50,7 @@
 
 #pragma mark -
 
-@implementation DSFingerTipWindow
+@implementation MBFingerTipWindow
 
 @synthesize touchImage=_touchImage;
 
@@ -61,7 +61,7 @@
     self = [super initWithCoder:decoder];
 
     if (self != nil)
-        [self DSFingerTipWindow_commonInit];
+        [self MBFingerTipWindow_commonInit];
     
     return self;
 }
@@ -73,12 +73,12 @@
     self = [super initWithFrame:rect];
     
     if (self != nil)
-        [self DSFingerTipWindow_commonInit];
+        [self MBFingerTipWindow_commonInit];
     
     return self;
 }
 
-- (void)DSFingerTipWindow_commonInit
+- (void)MBFingerTipWindow_commonInit
 {
     self.strokeColor = [UIColor blackColor];
     self.fillColor = [UIColor whiteColor];
@@ -201,7 +201,7 @@
                 case UITouchPhaseMoved:
                 case UITouchPhaseStationary:
                 {
-                    DSFingerTipView *touchView = (DSFingerTipView *)[self.overlayWindow viewWithTag:touch.hash];
+                    MBFingerTipView *touchView = (MBFingerTipView *)[self.overlayWindow viewWithTag:touch.hash];
 
                     if (touch.phase != UITouchPhaseStationary && touchView != nil && [touchView isFadingOut])
                     {
@@ -211,7 +211,7 @@
                     
                     if (touchView == nil && touch.phase != UITouchPhaseStationary)
                     {
-                        touchView = [[DSFingerTipView alloc] initWithImage:self.touchImage];
+                        touchView = [[MBFingerTipView alloc] initWithImage:self.touchImage];
                         [self.overlayWindow addSubview:touchView];
                     }
             
@@ -266,9 +266,9 @@
     NSTimeInterval now = [[NSProcessInfo processInfo] systemUptime];
     const CGFloat REMOVAL_DELAY = 0.2;
 
-    for (DSFingerTipView *touchView in [self.overlayWindow subviews])
+    for (MBFingerTipView *touchView in [self.overlayWindow subviews])
     {
-        if ( ! [touchView isKindOfClass:[DSFingerTipView class]])
+        if ( ! [touchView isKindOfClass:[MBFingerTipView class]])
             continue;
         
         if (touchView.shouldAutomaticallyRemoveAfterTimeout && now > touchView.timestamp + REMOVAL_DELAY)
@@ -281,8 +281,8 @@
 
 - (void)removeFingerTipWithHash:(NSUInteger)hash animated:(BOOL)animated;
 {
-    DSFingerTipView *touchView = (DSFingerTipView *)[self.overlayWindow viewWithTag:hash];
-    if ( ! [touchView isKindOfClass:[DSFingerTipView class]])
+    MBFingerTipView *touchView = (MBFingerTipView *)[self.overlayWindow viewWithTag:hash];
+    if ( ! [touchView isKindOfClass:[MBFingerTipView class]])
         return;
     
     if ([touchView isFadingOut])
@@ -358,6 +358,6 @@
 
 #pragma mark -
 
-@implementation DSFingerTipView
+@implementation MBFingerTipView
 
 @end
