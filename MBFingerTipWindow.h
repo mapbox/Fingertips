@@ -9,7 +9,7 @@
 
 @interface MBFingerTipSettings : NSObject
 
-/** Set to YES fo enable FingerTips. Defaults to NO */
+/** Set to YES fo enable FingerTips. Defaults to NO. */
 @property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
 /** A custom image to use to show touches on screen. If unset, defaults to a partially-transparent stroked circle. */
@@ -31,7 +31,7 @@
 
 /** Gives you automatic presentation mode in your iOS app. Note that currently, this is only designed for the iPad 2 and iPhone 4S (or later), which feature hardware video mirroring support. This library does not do the mirroring for you!
  *
- *   Set fingerTipEnabled to YES on your application window and your app will automatically determine when an external screen is available. It will show every touch on-screen with a nice partially-transparent graphic that automatically fades out when the touch ends. */
+ *  Access the `fingerTipSettings` property of your application window, and set `enabled` to YES to have your app automatically determine when an external screen is available. It will show every touch on-screen with a nice partially-transparent graphic that automatically fades out when the touch ends. */
 @interface UIWindow (MBFingerTip)
 
 @property (nonatomic, readonly, strong) MBFingerTipSettings *fingerTipSettings;

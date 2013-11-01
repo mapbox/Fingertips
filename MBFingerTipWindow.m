@@ -373,6 +373,7 @@
 {
     static void *MBFingerTipSettingsKey = &MBFingerTipSettingsKey;
     
+	// Lazily bind a settings object when the `fingerTipSettings` property is accessed
 	MBFingerTipSettings *fingerTipSettings = objc_getAssociatedObject(self, MBFingerTipSettingsKey);
 	if ( ! fingerTipSettings)
 	{
