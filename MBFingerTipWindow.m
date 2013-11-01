@@ -83,13 +83,6 @@
     self.strokeColor = [UIColor blackColor];
     self.fillColor = [UIColor whiteColor];
     
-    self.overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
-    
-    self.overlayWindow.userInteractionEnabled = NO;
-    self.overlayWindow.windowLevel = UIWindowLevelStatusBar;
-    self.overlayWindow.backgroundColor = [UIColor clearColor];
-    self.overlayWindow.hidden = NO;
-
     self.touchAlpha   = 0.5;
     self.fadeDuration = 0.3;
     
@@ -115,6 +108,21 @@
 }
 
 #pragma mark -
+
+- (UIWindow *)overlayWindow
+{
+    if ( ! _overlayWindow)
+    {
+        _overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
+        
+        _overlayWindow.userInteractionEnabled = NO;
+        _overlayWindow.windowLevel = UIWindowLevelStatusBar;
+        _overlayWindow.backgroundColor = [UIColor clearColor];
+        _overlayWindow.hidden = NO;
+    }
+    
+    return _overlayWindow;
+}
 
 - (UIImage *)touchImage
 {
