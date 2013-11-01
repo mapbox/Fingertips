@@ -13,14 +13,6 @@
     #error "ARC must be enabled for MBFingerTipWindow.m"
 #endif
 
-// Turn this on to debug touches during development.
-//
-#ifdef TARGET_IPHONE_SIMULATOR
-    #define DEBUG_FINGERTIP_WINDOW 0
-#else
-    #define DEBUG_FINGERTIP_WINDOW 0
-#endif
-
 @interface MBFingerTipView : UIImageView
 
 @property (nonatomic, assign) NSTimeInterval timestamp;
@@ -177,11 +169,10 @@
 
 - (void)updateFingertipsAreActive;
 {
-#if DEBUG_FINGERTIP_WINDOW
-    self.active = YES;
-#else
-    self.active = [self anyScreenIsMirrored];
-#endif    
+    if ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue])
+        self.active = YES;
+    else
+        self.active = [self anyScreenIsMirrored];
 }
 
 #pragma mark -
