@@ -1,4 +1,6 @@
-# Fingertips: Presentation mode for your iOS app
+# Fingertips
+
+### Presentation mode for your iOS app
 
 Fingertips is a small library (one class) meant for presentations from iOS devices that shows all touches and gestures so that the audience can see them. 
 
