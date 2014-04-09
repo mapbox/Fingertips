@@ -17,16 +17,6 @@ Pod::Spec.new do |f|
 
   f.requires_arc = true
 
-  f.documentation = {
-    :appledoc => [
-      '--project-company', 'Mapbox',
-      '--docset-copyright', 'Mapbox',
-      '--no-keep-undocumented-objects',
-      '--no-keep-undocumented-members',
-      '--ignore', '.m',
-    ]
-  }
-
   f.framework = 'UIKit'
 
 end
