@@ -5,7 +5,7 @@ Pod::Spec.new do |f|
 
   f.summary     = 'Touch indicators on external displays for iOS applications.'
   f.description = 'A UIWindow subclass that gives you automatic presentation mode in your iOS app.'
-  f.homepage    = 'http://github.com/mapbox/Fingertips'
+  f.homepage    = 'https://github.com/mapbox/Fingertips'
   f.license     = 'BSD'
   f.author      = { 'Mapbox' => 'mobile@mapbox.com' }
 
