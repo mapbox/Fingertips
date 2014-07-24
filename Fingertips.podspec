@@ -4,13 +4,13 @@ Pod::Spec.new do |f|
   f.version = '0.3.0'
 
   f.summary          = 'Touch indicators on external displays for iOS applications.'
-  f.description      = 'A UIWindow subclass that gives you automatic presentation mode in your iOS app.'
+  f.description      = 'Touch indicators on external displays for iOS applications, giving you automatic presentation mode using a simple UIWindow subclass.'
   f.homepage         = 'https://github.com/mapbox/Fingertips'
   f.license          = 'BSD'
   f.author           = { 'Mapbox' => 'mobile@mapbox.com' }
   f.social_media_url = 'https://twitter.com/Mapbox'
 
-  f.source = { :git => 'https://github.com/mapbox/Fingertips.git', :tag => f.version.to_s }
+  f.source = { :git => 'https://github.com/mapbox/Fingertips.git', :branch => 'master' }
 
   f.platform = :ios, '5.0'
 
