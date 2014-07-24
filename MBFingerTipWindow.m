@@ -1,8 +1,7 @@
 //
 //  MBFingerTipWindow.m
 //
-//  Created by Justin R. Miller on 3/29/11.
-//  Copyright 2011-2013 MapBox. All rights reserved.
+//  Copyright 2011-2014 Mapbox, Inc. All rights reserved.
 //
 
 #import "MBFingerTipWindow.h"
