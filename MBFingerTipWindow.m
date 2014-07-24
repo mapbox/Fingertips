@@ -185,7 +185,8 @@
 #pragma mark -
 #pragma mark UIWindow overrides
 
-- (void)setRootViewController:(UIViewController *)rootViewController {
+- (void)setRootViewController:(UIViewController *)rootViewController
+{
     [super setRootViewController:rootViewController];
     [self.overlayWindow setRootViewController:rootViewController];
 }
