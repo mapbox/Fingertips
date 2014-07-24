@@ -185,12 +185,6 @@
 #pragma mark -
 #pragma mark UIWindow overrides
 
-- (void)setRootViewController:(UIViewController *)rootViewController
-{
-    [super setRootViewController:rootViewController];
-    [self.overlayWindow setRootViewController:rootViewController];
-}
-
 - (void)sendEvent:(UIEvent *)event
 {
     if (self.active)
