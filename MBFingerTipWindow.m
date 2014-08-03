@@ -22,6 +22,11 @@
 
 #pragma mark -
 
+@interface MBFingerTipOverlayWindow : UIWindow
+@end
+
+#pragma mark -
+
 @interface MBFingerTipWindow ()
 
 @property (nonatomic, strong) UIWindow *overlayWindow;
@@ -104,7 +109,7 @@
 {
     if ( ! _overlayWindow)
     {
-        _overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
+        _overlayWindow = [[MBFingerTipOverlayWindow alloc] initWithFrame:self.frame];
         
         _overlayWindow.userInteractionEnabled = NO;
         _overlayWindow.windowLevel = UIWindowLevelStatusBar;
@@ -357,5 +362,28 @@
 #pragma mark -
 
 @implementation MBFingerTipView
+
+@end
+
+#pragma mark -
+
+@implementation MBFingerTipOverlayWindow
+
+// UIKit tries to get the rootViewController from the overlay window.
+// Instead, try to find the rootViewController on some other
+// application window.
+// Fixes problems with status bar hiding, because it considers the
+// overlay window a candidate for controlling the status bar.
+- (UIViewController *)rootViewController {
+    for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
+        if (self == window)
+            continue;
+
+        UIViewController *realRootViewController = window.rootViewController;
+        if (realRootViewController != nil)
+            return realRootViewController;
+    }
+    return [super rootViewController];
+}
 
 @end
