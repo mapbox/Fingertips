@@ -152,6 +152,17 @@
     return _touchImage;
 }
 
+#pragma mark - Setter
+
+- (void)setAlwaysShowFingerTip:(BOOL)alwaysShowFingerTip
+{
+	if (_alwaysShowFingerTip != alwaysShowFingerTip)
+	{
+		_alwaysShowFingerTip = alwaysShowFingerTip;
+		[self updateFingertipsAreActive];
+	}
+}
+
 #pragma mark -
 #pragma mark Screen notifications
 
@@ -181,7 +192,7 @@
 
 - (void)updateFingertipsAreActive;
 {
-    if ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue])
+    if (self.alwaysShowFingerTip || ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue]))
         self.active = YES;
     else
         self.active = [self anyScreenIsMirrored];

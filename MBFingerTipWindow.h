@@ -26,4 +26,7 @@
 /** If using the default touchImage, the color with whicih to fill the shape. Defaults to white. */
 @property (nonatomic, strong) UIColor *fillColor;
 
+/** Sets whether fingertips should always show regardless of whether we're mirroring. Defaults to NO */
+@property (nonatomic) BOOL alwaysShowFingerTip;
+
 @end
