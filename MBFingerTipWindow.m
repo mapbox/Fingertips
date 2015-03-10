@@ -154,12 +154,13 @@
 
 #pragma mark - Setter
 
-- (void)setAlwaysShowFingerTip:(BOOL)alwaysShowFingerTip
+- (void)setAlwaysShowTouches:(BOOL)flag
 {
-	if (_alwaysShowFingerTip != alwaysShowFingerTip)
+	if (_alwaysShowTouches != flag)
 	{
-		_alwaysShowFingerTip = alwaysShowFingerTip;
-		[self updateFingertipsAreActive];
+		_alwaysShowTouches = flag;
+
+        [self updateFingertipsAreActive];
 	}
 }
 
@@ -192,10 +193,14 @@
 
 - (void)updateFingertipsAreActive;
 {
-    if (self.alwaysShowFingerTip || ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue]))
+    if (self.alwaysShowTouches || ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue]))
+    {
         self.active = YES;
+    }
     else
+    {
         self.active = [self anyScreenIsMirrored];
+    }
 }
 
 #pragma mark -
