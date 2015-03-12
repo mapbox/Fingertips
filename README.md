@@ -22,7 +22,11 @@ You shouldn't need to configure anything, but if you want to tweak some knobs:
  * `strokeColor`: change default `touchImage` stroke color (defaults to black)
  * `fillColor`: change default `touchImage` fill color (defaults to white)
 
-If you ever need to debug Fingertips, just set the `DEBUG_FINGERTIP_WINDOW` environment variable to `YES` in Xcode.
+If you ever need to debug Fingertips, i.e. always show touches even when no mirroring is active, set the `DEBUG_FINGERTIP_WINDOW` [environment variable](http://stackoverflow.com/questions/17393053/xcode-4-6-where-to-set-environment-variables-for-app/17394454#17394454) to `YES` in Xcode. If you want to always show touches, even in release mode, just add this line of code.
+
+```objc
+setenv("DEBUG_FINGERTIP_WINDOW", "YES", 1);
+```
 
 ## License
 
