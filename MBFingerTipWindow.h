@@ -23,7 +23,7 @@
 /** If using the default touchImage, the color with which to stroke the shape. Defaults to black. */
 @property (nonatomic, strong) UIColor *strokeColor;
 
-/** If using the default touchImage, the color with whicih to fill the shape. Defaults to white. */
+/** If using the default touchImage, the color with which to fill the shape. Defaults to white. */
 @property (nonatomic, strong) UIColor *fillColor;
 
 /** Sets whether touches should always show regardless of whether the display is mirroring. Defaults to NO. */
