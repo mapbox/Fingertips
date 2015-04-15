@@ -8,9 +8,9 @@ This is only designed for the iPad 2 and iPhone 4S (or later), which feature [ha
 
 Just drop in our replacement `UIWindow` subclass and your app will automatically determine when an external screen is available. It will show every touch on-screen with a nice partially-transparent graphic that automatically fades out when the touch ends. 
 
-Here's a [demo video](http://vimeo.com/22136667).
-
 Fingertips requires iOS 5.0 or greater and ARC. 
+
+![](screenshot.gif)
 
 ## Configuration
 
