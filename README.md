@@ -22,7 +22,7 @@ You shouldn't need to configure anything, but if you want to tweak some knobs:
  * `strokeColor`: change default `touchImage` stroke color (defaults to black)
  * `fillColor`: change default `touchImage` fill color (defaults to white)
 
-If you ever need to debug Fingertips, just set the `DEBUG_FINGERTIP_WINDOW` environment variable to `YES` in Xcode.
+If you ever need to debug Fingertips, just set the `DEBUG_FINGERTIP_WINDOW` environment variable to `YES` in Xcode or set the runtime property `alwaysShowTouches` to `YES`.
 
 ## License
 
