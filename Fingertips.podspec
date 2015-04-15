@@ -1,7 +1,7 @@
 Pod::Spec.new do |f|
 
   f.name    = 'Fingertips'
-  f.version = '0.3.0'
+  f.version = '0.4.0'
 
   f.summary          = 'Touch indicators on external displays for iOS applications.'
   f.description      = 'Touch indicators on external displays for iOS applications, giving you automatic presentation mode using a simple UIWindow subclass.'
