@@ -26,7 +26,4 @@
 /** If using the default touchImage, the color with which to fill the shape. Defaults to white. */
 @property (nonatomic, strong) UIColor *fillColor;
 
-/** Sets whether touches should always show regardless of whether the display is mirroring. Defaults to NO. */
-@property (nonatomic, assign) BOOL alwaysShowTouches;
-
 @end

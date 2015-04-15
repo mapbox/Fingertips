@@ -152,18 +152,6 @@
     return _touchImage;
 }
 
-#pragma mark - Setter
-
-- (void)setAlwaysShowTouches:(BOOL)flag
-{
-	if (_alwaysShowTouches != flag)
-	{
-		_alwaysShowTouches = flag;
-
-        [self updateFingertipsAreActive];
-	}
-}
-
 #pragma mark -
 #pragma mark Screen notifications
 
@@ -193,7 +181,7 @@
 
 - (void)updateFingertipsAreActive;
 {
-    if (self.alwaysShowTouches || ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue]))
+    if ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue])
     {
         self.active = YES;
     }
