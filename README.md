@@ -11,14 +11,22 @@ Just drop in our replacement `UIWindow` subclass and your app will automatically
 If you are using storyboards, the easiest way to integrate Fingertips is to override the `window` method of your application delegate like this:
 
 ```objc
-- (UIWindow *) window
-{
-	if (!_window)
-	{
-		_window = [[MBFingerTipWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+// AppDelegate.m
+
+- (UIWindow *)window {
+	if (!_window) {
+		_window = [[MBFingerTipWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	}
 	return _window;
 }
+```
+
+```swift
+// AppDelegate.swift
+
+lazy var window: UIWindow? = {
+	return MBFingerTipWindow.init(frame: UIScreen.mainScreen().bounds)
+}()
 ```
 
 Fingertips requires iOS 5.0 or greater and ARC. It uses **no private API** and is safe for App Store submissions. 
