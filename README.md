@@ -22,10 +22,18 @@ If you are using storyboards, the easiest way to integrate Fingertips is to over
 ```
 
 ```swift
-// AppDelegate.swift
+// AppDelegate.swift (Swift 2)
 
 lazy var window: UIWindow? = {
-	return MBFingerTipWindow.init(frame: UIScreen.mainScreen().bounds)
+	return MBFingerTipWindow(frame: UIScreen.mainScreen().bounds)
+}()
+```
+
+```swift
+// AppDelegate.swift (Swift 3)
+
+lazy var window: UIWindow? = {
+	return MBFingerTipWindow(frame: UIScreen.main.bounds)
 }()
 ```
 
