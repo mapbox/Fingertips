@@ -24,17 +24,13 @@ If you are using storyboards, the easiest way to integrate Fingertips is to over
 ```swift
 // AppDelegate.swift (Swift 2)
 
-lazy var window: UIWindow? = {
-	return MBFingerTipWindow(frame: UIScreen.mainScreen().bounds)
-}()
+var window: UIWindow? = MBFingerTipWindow(frame: UIScreen.mainScreen().bounds)
 ```
 
 ```swift
 // AppDelegate.swift (Swift 3)
 
-lazy var window: UIWindow? = {
-	return MBFingerTipWindow(frame: UIScreen.main.bounds)
-}()
+var window: UIWindow? = MBFingerTipWindow(frame: UIScreen.main.bounds)
 ```
 
 Fingertips requires iOS 5.0 or greater and ARC. It uses **no private API** and is safe for App Store submissions. 
