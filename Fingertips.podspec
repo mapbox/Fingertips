@@ -10,7 +10,7 @@ Pod::Spec.new do |f|
   f.author           = { 'Mapbox' => 'mobile@mapbox.com' }
   f.social_media_url = 'https://twitter.com/Mapbox'
 
-  f.source = { :git => 'https://github.com/mapbox/Fingertips.git', :tag => f.version.to_s }
+  f.source = { :git => 'https://github.com/mapbox/Fingertips.git', :tag => "v#{f.version.to_s}" }
 
   f.platform = :ios, '5.0'
 
