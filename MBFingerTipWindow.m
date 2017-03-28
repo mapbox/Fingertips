@@ -385,22 +385,17 @@
 
 @implementation MBFingerTipOverlayWindow
 
-// UIKit tries to get the rootViewController from the overlay window.
-// Instead, try to find the rootViewController on some other application window.
-// Fixes problems with status bar hiding, because it considers the overlay window a candidate for controlling the status bar.
+// UIKit tries to get the rootViewController from the overlay window. Use the Fingertips window instead. This fixes
+// issues with status bar behavior, as otherwise the overlay window would control the status bar.
 
 - (UIViewController *)rootViewController
 {
-    for (UIWindow *window in [[UIApplication sharedApplication] windows])
+    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings)
     {
-        if (self == window)
-            continue;
-
-        UIViewController *realRootViewController = window.rootViewController;
-        if (realRootViewController != nil)
-            return realRootViewController;
-    }
-    return [super rootViewController];
+        return [evaluatedObject isKindOfClass:[MBFingerTipWindow class]];
+    }];
+    UIWindow *mainWindow = [[[[UIApplication sharedApplication] windows] filteredArrayUsingPredicate:predicate] firstObject];
+    return mainWindow.rootViewController ?: [super rootViewController];
 }
 
 @end
