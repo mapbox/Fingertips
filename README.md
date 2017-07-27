@@ -1,5 +1,7 @@
 # Fingertips
 
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2FFingertips.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2FFingertips?ref=badge_shield)
+
 ### Presentation mode for your iOS app
 
 Fingertips is a small library (one class) meant for presentations from iOS devices that shows all touches and gestures so that the audience can see them. 
@@ -54,3 +56,5 @@ If you ever need to debug Fingertips, just set the `DEBUG_FINGERTIP_WINDOW` envi
 Copyright (c) 2011-2017 Mapbox, Inc.
 
 The Fingertips library should be accompanied by a LICENSE file. This file contains the license relevant to this distribution. If no license exists, please contact [Mapbox](http://mapbox.com).
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2FFingertips.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2FFingertips?ref=badge_large)
