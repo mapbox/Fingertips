@@ -33,9 +33,6 @@
 @property (nonatomic, assign) BOOL active;
 @property (nonatomic, assign) BOOL fingerTipRemovalScheduled;
 
-- (void)MBFingerTipWindow_commonInit;
-- (BOOL)anyScreenIsMirrored;
-- (void)updateFingertipsAreActive;
 - (void)scheduleFingerTipRemoval;
 - (void)cancelScheduledFingerTipRemoval;
 - (void)removeInactiveFingerTips;
@@ -53,54 +50,21 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     // This covers NIB-loaded windows.
-    //
     self = [super initWithCoder:decoder];
-
-    if (self != nil)
-        [self MBFingerTipWindow_commonInit];
-    
     return self;
 }
 
 - (id)initWithFrame:(CGRect)rect
 {
-    // This covers programmatically-created windows.
-    //
-    self = [super initWithFrame:rect];
-    
-    if (self != nil)
-        [self MBFingerTipWindow_commonInit];
-    
-    return self;
-}
 
-- (void)MBFingerTipWindow_commonInit
-{
+    self = [super initWithFrame:rect];
     self.strokeColor = [UIColor blackColor];
     self.fillColor = [UIColor whiteColor];
-    
+
     self.touchAlpha   = 0.5;
     self.fadeDuration = 0.3;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(screenConnect:)
-                                                 name:UIScreenDidConnectNotification
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(screenDisconnect:)
-                                                 name:UIScreenDidDisconnectNotification
-                                               object:nil];
-
-    // Set up active now, in case the screen was present before the window was created (or application launched).
-    //
-    [self updateFingertipsAreActive];
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidConnectNotification    object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidDisconnectNotification object:nil];
+    return self;
 }
 
 #pragma mark -
@@ -128,11 +92,11 @@
         
         UIGraphicsBeginImageContextWithOptions(clipPath.bounds.size, NO, 0);
 
-        UIBezierPath *drawPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(25.0, 25.0) 
-                                                                radius:22.0
-                                                            startAngle:0
-                                                              endAngle:2 * M_PI
-                                                             clockwise:YES];
+        UIBezierPath *drawPath = [UIBezierPath bezierPathWithArcCenter: CGPointMake(25.0, 25.0)
+                                                                radius: 22.0
+                                                            startAngle: 0
+                                                              endAngle: 2 * M_PI
+                                                             clockwise: YES];
 
         drawPath.lineWidth = 2.0;
         
@@ -154,53 +118,10 @@
 
 #pragma mark - Setter
 
-- (void)setAlwaysShowTouches:(BOOL)flag
+- (void)shouldShowTouches:(BOOL)flag
 {
-	if (_alwaysShowTouches != flag)
-	{
-		_alwaysShowTouches = flag;
+		self.active = flag;
 
-        [self updateFingertipsAreActive];
-	}
-}
-
-#pragma mark -
-#pragma mark Screen notifications
-
-- (void)screenConnect:(NSNotification *)notification
-{
-    [self updateFingertipsAreActive];
-}
-
-- (void)screenDisconnect:(NSNotification *)notification
-{
-    [self updateFingertipsAreActive];
-}
-
-- (BOOL)anyScreenIsMirrored
-{
-    if ( ! [UIScreen instancesRespondToSelector:@selector(mirroredScreen)])
-        return NO;
-
-    for (UIScreen *screen in [UIScreen screens])
-    {
-        if ([screen mirroredScreen] != nil)
-            return YES;
-    }
-
-    return NO;
-}
-
-- (void)updateFingertipsAreActive;
-{
-    if (self.alwaysShowTouches || ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue]))
-    {
-        self.active = YES;
-    }
-    else
-    {
-        self.active = [self anyScreenIsMirrored];
-    }
 }
 
 #pragma mark -
