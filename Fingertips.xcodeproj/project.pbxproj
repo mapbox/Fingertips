@@ -16,8 +16,8 @@
 		BE6B26161CFA17AF001BFB6F /* Fingertips.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Fingertips.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE6B26191CFA17AF001BFB6F /* Fingertips.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fingertips.h; sourceTree = "<group>"; };
 		BE6B261B1CFA17AF001BFB6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BE6B26211CFB5636001BFB6F /* MBFingerTipWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBFingerTipWindow.h; sourceTree = "<group>"; };
-		BE6B26221CFB5636001BFB6F /* MBFingerTipWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBFingerTipWindow.m; sourceTree = "<group>"; };
+		BE6B26211CFB5636001BFB6F /* MBFingerTipWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBFingerTipWindow.h; path = Sources/Fingertips/include/MBFingerTipWindow.h; sourceTree = "<group>"; };
+		BE6B26221CFB5636001BFB6F /* MBFingerTipWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MBFingerTipWindow.m; path = Sources/Fingertips/MBFingerTipWindow.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

@@ -4,7 +4,7 @@
 //  Copyright 2011-2017 Mapbox, Inc. All rights reserved.
 //
 
-#import "MBFingerTipWindow.h"
+#import "include/MBFingerTipWindow.h"
 
 // This file must be built with ARC.
 //
