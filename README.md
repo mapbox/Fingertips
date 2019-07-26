@@ -53,7 +53,7 @@ If you ever need to debug Fingertips, just set the `DEBUG_FINGERTIP_WINDOW` envi
 
 ## License
 
-Copyright (c) 2011-2017 Mapbox, Inc.
+Copyright (c) 2011-2019 Mapbox, Inc.
 
 The Fingertips library should be accompanied by a LICENSE file. This file contains the license relevant to this distribution. If no license exists, please contact [Mapbox](http://mapbox.com).
 

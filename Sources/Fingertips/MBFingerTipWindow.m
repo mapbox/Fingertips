@@ -1,7 +1,7 @@
 //
 //  MBFingerTipWindow.m
 //
-//  Copyright 2011-2017 Mapbox, Inc. All rights reserved.
+//  Copyright 2011-2019 Mapbox, Inc. All rights reserved.
 //
 
 #import "include/MBFingerTipWindow.h"
