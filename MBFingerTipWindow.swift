@@ -1,9 +1,7 @@
 //
 //  MBFingerTipWindow.swift
-//  MietappFT
 //
 //  Created by Felix Traxler on 05.08.19.
-//  Copyright © 2019 Felix Traxler. All rights reserved.
 //
 
 import Foundation
@@ -51,7 +49,7 @@ class MBFingerTipWindow: UIWindow {
         }
     }
     
-    private var _touchImage: UIImage?        = nil
+    private var _touchImage: UIImage? = nil
     var touchImage: UIImage {
         if _touchImage == nil {
             let clipPath = UIBezierPath(rect: CGRect(x: 0, y: 0, width: 50, height: 50))
@@ -92,7 +90,7 @@ class MBFingerTipWindow: UIWindow {
         }
         
         set {
-            
+            _overlayWindow = newValue
         }
     }
     var action: Bool?
@@ -112,7 +110,6 @@ class MBFingerTipWindow: UIWindow {
     
     func commonInit() {
         NotificationCenter.default.addObserver(self, selector: #selector(screenConnect), name: UIScreen.didConnectNotification, object: nil)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(screenDisconnect), name: UIScreen.didDisconnectNotification, object: nil)
         
         updateFingertipsAreActive()
@@ -125,7 +122,6 @@ class MBFingerTipWindow: UIWindow {
     
     func anyScreenIsMirrored() -> Bool {
         if UIScreen.instancesRespond(to: #selector(getter: UIScreen.mirrored)) {
-            
             for screen in UIScreen.screens {
                 if let _ = screen.mirrored {
                     return true
@@ -181,7 +177,6 @@ class MBFingerTipWindow: UIWindow {
         }
         
         super.sendEvent(event)
-        
         scheduleFingerTipRemoval()
     }
     
@@ -216,7 +211,6 @@ class MBFingerTipWindow: UIWindow {
         if overlayWindow.subviews.count > 0 {
             scheduleFingerTipRemoval()
         }
-        
     }
     
     func removeFingerTip(with hash: Int, animated: Bool) {
@@ -241,7 +235,6 @@ class MBFingerTipWindow: UIWindow {
     func shouldAutomaticallyRemoveFingerTip(for touch: UITouch) -> Bool {
         
         var view = touch.view
-        
         view = view?.hitTest(touch.location(in: view), with: nil)
         
         while view != nil {
