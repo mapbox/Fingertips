@@ -1,19 +1,15 @@
-//
-//  MBFingerTipWindow.swift
-//
-//  Created by Felix Traxler on 05.08.19.
-//
-
 import Foundation
 import UIKit
 
-class MBFingerTipView: UIImageView {
+@objc(MBXFingerTipView)
+class FingerTipView: UIImageView {
     var timestamp: TimeInterval?
     var shouldAutomaticallyRemoveAfterTimeout: Bool?
     var fadingOut: Bool = false
 }
 
-class MBFingerTipOverlayWindow: UIWindow {
+@objc (MBXFingerTipOverlayWindow)
+class FingerTipOverlayWindow: UIWindow {
     override var rootViewController: UIViewController? {
         set {
             super.rootViewController = newValue
@@ -21,7 +17,7 @@ class MBFingerTipOverlayWindow: UIWindow {
         
         get {
             for window in UIApplication.shared.windows {
-                if let window = window as? MBFingerTipWindow {
+                if let window = window as? FingerTipWindow {
                     return window.rootViewController
                 }
             }
@@ -31,7 +27,8 @@ class MBFingerTipOverlayWindow: UIWindow {
     }
 }
 
-class MBFingerTipWindow: UIWindow {
+@objc (MBXFingerTipWindow)
+class FingerTipWindow: UIWindow {
     
     var touchAlpha: CGFloat         = 0.5
     var fadeDuration: TimeInterval  = 0.3
@@ -79,7 +76,7 @@ class MBFingerTipWindow: UIWindow {
     var overlayWindow: UIWindow {
         get {
             if _overlayWindow == nil {
-                _overlayWindow = MBFingerTipOverlayWindow(frame: frame)
+                _overlayWindow = FingerTipOverlayWindow(frame: frame)
                 _overlayWindow?.isUserInteractionEnabled = false
                 _overlayWindow?.windowLevel = UIWindow.Level.statusBar
                 _overlayWindow?.backgroundColor = .clear
@@ -147,7 +144,7 @@ class MBFingerTipWindow: UIWindow {
             for touch in allTouches {
                 switch touch.phase {
                 case .began, .moved, .stationary:
-                    var touchView = overlayWindow.viewWithTag(touch.hashValue) as? MBFingerTipView
+                    var touchView = overlayWindow.viewWithTag(touch.hashValue) as? FingerTipView
                     
                     if touch.phase != .stationary && touchView != nil && touchView?.fadingOut == true {
                         touchView?.removeFromSuperview()
@@ -155,7 +152,7 @@ class MBFingerTipWindow: UIWindow {
                     }
                     
                     if touchView == nil && touch.phase != .stationary {
-                        touchView = MBFingerTipView(image: touchImage)
+                        touchView = FingerTipView(image: touchImage)
                         overlayWindow.addSubview(touchView!)
                     }
                     
@@ -201,7 +198,7 @@ class MBFingerTipWindow: UIWindow {
         let REMOVAL_DELAY = 0.2
         
         for touchView in overlayWindow.subviews {
-            if let touchView = touchView as? MBFingerTipView {
+            if let touchView = touchView as? FingerTipView {
                 if touchView.shouldAutomaticallyRemoveAfterTimeout == true && now > touchView.timestamp ?? 0 + REMOVAL_DELAY {
                     removeFingerTip(with: touchView.tag, animated: true)
                 }
@@ -214,7 +211,7 @@ class MBFingerTipWindow: UIWindow {
     }
     
     func removeFingerTip(with hash: Int, animated: Bool) {
-        guard let touchView = overlayWindow.viewWithTag(hash) as? MBFingerTipView else { return }
+        guard let touchView = overlayWindow.viewWithTag(hash) as? FingerTipView else { return }
         
         if touchView.fadingOut == true {
             return
