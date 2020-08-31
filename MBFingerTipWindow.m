@@ -251,6 +251,9 @@
                     [self removeFingerTipWithHash:touch.hash animated:YES];
                     break;
                 }
+                default:
+                    // Handle the `UITouchPhaseRegion`... enum values.
+                    break;
             }
         }
     }
