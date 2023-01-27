@@ -92,6 +92,12 @@
                                                  name:UIScreenDidDisconnectNotification
                                                object:nil];
 
+    if (@available(iOS 11.0, *))
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                selector:@selector(screenCaptureChanged:)
+                                                    name:UIScreenCapturedDidChangeNotification
+                                                object:nil];
+
     // Set up active now, in case the screen was present before the window was created (or application launched).
     //
     [self updateFingertipsAreActive];
@@ -99,8 +105,10 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidConnectNotification    object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidConnectNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenDidDisconnectNotification object:nil];
+    if (@available(iOS 11.0, *))
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:UIScreenCapturedDidChangeNotification object:nil];
 }
 
 #pragma mark -
@@ -156,12 +164,12 @@
 
 - (void)setAlwaysShowTouches:(BOOL)flag
 {
-	if (_alwaysShowTouches != flag)
-	{
-		_alwaysShowTouches = flag;
+    if (_alwaysShowTouches != flag)
+    {
+        _alwaysShowTouches = flag;
 
         [self updateFingertipsAreActive];
-	}
+    }
 }
 
 #pragma mark -
@@ -177,6 +185,11 @@
     [self updateFingertipsAreActive];
 }
 
+- (void)screenCaptureChanged:(NSNotification *)notification
+{
+    [self updateFingertipsAreActive];
+}
+
 - (BOOL)anyScreenIsMirrored
 {
     if ( ! [UIScreen instancesRespondToSelector:@selector(mirroredScreen)])
@@ -186,6 +199,10 @@
     {
         if ([screen mirroredScreen] != nil)
             return YES;
+        
+        if (@available(iOS 11.0, *))
+            if ([screen isCaptured])
+                return YES;
     }
 
     return NO;
