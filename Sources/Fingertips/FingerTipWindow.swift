@@ -108,7 +108,9 @@ public class FingerTipWindow: UIWindow {
     func commonInit() {
         NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.didConnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.didDisconnectNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.capturedDidChangeNotification, object: nil)
+        if #available(iOS 11.0, *) {
+            NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.capturedDidChangeNotification, object: nil)
+        }
 
         updateFingertipsAreActive()
     }
@@ -116,11 +118,18 @@ public class FingerTipWindow: UIWindow {
     deinit {
         NotificationCenter.default.removeObserver(self, name: UIScreen.didConnectNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIScreen.didDisconnectNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIScreen.capturedDidChangeNotification, object: nil)
+        if #available(iOS 11.0, *) {
+            NotificationCenter.default.removeObserver(self, name: UIScreen.capturedDidChangeNotification, object: nil)
+        }
     }
 
     func anyScreenIsCaptured() -> Bool {
-        let capturedScreen = UIScreen.screens.first(where: \.isCaptured)
+        let capturedScreen: UIScreen?
+        if #available(iOS 11.0, *) {
+            capturedScreen = UIScreen.screens.first(where: \.isCaptured)
+        } else {
+            capturedScreen = UIScreen.screens.first(where: { $0.mirrored != nil })
+        }
         return capturedScreen != nil
     }
 
