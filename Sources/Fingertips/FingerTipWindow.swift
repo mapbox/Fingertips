@@ -76,7 +76,11 @@ public class FingerTipWindow: UIWindow {
     var overlayWindow: UIWindow {
         get {
             if _overlayWindow == nil {
-                _overlayWindow = FingerTipOverlayWindow(frame: frame)
+                if #available(iOS 13.0, *), let windowScene = windowScene {
+                    _overlayWindow = FingerTipOverlayWindow(windowScene: windowScene)
+                } else {
+                    _overlayWindow = FingerTipOverlayWindow(frame: frame)
+                }
                 _overlayWindow?.isUserInteractionEnabled = false
                 _overlayWindow?.windowLevel = UIWindow.Level.statusBar
                 _overlayWindow?.backgroundColor = .clear
@@ -101,6 +105,13 @@ public class FingerTipWindow: UIWindow {
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
+
+        commonInit()
+    }
+
+    @available(iOS 13.0, *)
+    public override init(windowScene: UIWindowScene) {
+        super.init(windowScene: windowScene)
 
         commonInit()
     }
