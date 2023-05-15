@@ -2,7 +2,7 @@
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2FFingertips.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmapbox%2FFingertips?ref=badge_shield)
 
-### Presentation mode for your iOS app
+## Presentation mode for your iOS app
 
 Fingertips is a small library (one class) meant for presentations from iOS devices that shows all touches and gestures so that the audience can see them.
 
@@ -16,13 +16,12 @@ If you are using storyboards, the easiest way to integrate Fingertips is to over
 // AppDelegate.m
 
 - (UIWindow *)window {
-	if (!_window) {
-		_window = [[MBFingerTipWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-	}
-	return _window;
+    if (!_window) {
+        _window = [[MBFingerTipWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    }
+    return _window;
 }
 ```
-
 
 ```swift
 // AppDelegate.swift (Swift)
@@ -31,18 +30,19 @@ var window: UIWindow? = FingerTipWindow(frame: UIScreen.main.bounds)
 ```
 
 For iOS 13+ with UISceneDelegate:
+
 ```swift
 var windows: [UIWindow] = []
 
 func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-	guard let windowScene = scene as? UIWindowScene else { return }
+    guard let windowScene = scene as? UIWindowScene else { return }
 
-	let window = FingerTipWindow(windowScene: windowScene)
+    let window = FingerTipWindow(windowScene: windowScene)
 
-	window.rootViewController = // Your root view controller
-	window.makeKeyAndVisible()
+    window.rootViewController = // Your root view controller
+    window.makeKeyAndVisible()
 
-	windows.append(window)
+    windows.append(window)
 }
 
 ```
