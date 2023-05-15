@@ -4,11 +4,11 @@
 
 ### Presentation mode for your iOS app
 
-Fingertips is a small library (one class) meant for presentations from iOS devices that shows all touches and gestures so that the audience can see them. 
+Fingertips is a small library (one class) meant for presentations from iOS devices that shows all touches and gestures so that the audience can see them.
 
 This is only designed for the iPad 2 and iPhone 4S (or later), which feature [hardware video mirroring](http://www.apple.com/ipad/features/airplay/) support. **This library does not do the mirroring for you!**
 
-Just drop in our replacement `UIWindow` subclass and your app will automatically determine when an external screen is available. It will show every touch on-screen with a nice partially-transparent graphic that automatically fades out when the touch ends. 
+Just drop in our replacement `UIWindow` subclass and your app will automatically determine when an external screen is available. It will show every touch on-screen with a nice partially-transparent graphic that automatically fades out when the touch ends.
 
 If you are using storyboards, the easiest way to integrate Fingertips is to override the `window` method of your application delegate like this:
 
@@ -23,25 +23,36 @@ If you are using storyboards, the easiest way to integrate Fingertips is to over
 }
 ```
 
+For iOS 13+ with UISceneDelegate:
 ```swift
-// AppDelegate.swift (Swift 2)
+var windows: [UIWindow] = []
 
-var window: UIWindow? = MBFingerTipWindow(frame: UIScreen.mainScreen().bounds)
+func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+	guard let windowScene = scene as? UIWindowScene else { return }
+
+	let window = FingerTipWindow(windowScene: windowScene)
+
+	window.rootViewController = // Your root view controller
+	window.makeKeyAndVisible()
+
+	windows.append(window)
+}
+
 ```
 
 ```swift
-// AppDelegate.swift (Swift 3)
+// AppDelegate.swift (Swift)
 
-var window: UIWindow? = MBFingerTipWindow(frame: UIScreen.main.bounds)
+var window: UIWindow? = FingerTipWindow(frame: UIScreen.main.bounds)
 ```
 
-Fingertips requires iOS 5.0 or greater and ARC. It uses **no private API** and is safe for App Store submissions. 
+Fingertips require iOS 11.0 or greater and ARC. It uses **no private API** and is safe for App Store submissions.
 
-![](screenshot.gif)
+https://github.com/mapbox/Fingertips/assets/735178/833f659e-b549-4e74-ae27-e695f37717b6
 
 ## Configuration
 
-You shouldn't need to configure anything, but if you want to tweak some knobs: 
+You shouldn't need to configure anything, but if you want to tweak some knobs:
 
  * `touchImage`: pass a `UIImage` to use for showing touches
  * `touchAlpha`: change the visible-touch alpha transparency
@@ -53,7 +64,7 @@ If you ever need to debug Fingertips, just set the `DEBUG_FINGERTIP_WINDOW` envi
 
 ## License
 
-Copyright (c) 2011-2017 Mapbox, Inc.
+Copyright (c) 2011-2023 Mapbox, Inc.
 
 The Fingertips library should be accompanied by a LICENSE file. This file contains the license relevant to this distribution. If no license exists, please contact [Mapbox](http://mapbox.com).
 
