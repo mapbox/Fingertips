@@ -6,9 +6,9 @@
 
 Fingertips is a small library (one class) meant for presentations from iOS devices that shows all touches and gestures so that the audience can see them.
 
-This is only designed for the iPad 2 and iPhone 4S (or later), which feature [hardware video mirroring](http://www.apple.com/ipad/features/airplay/) support. **This library does not do the mirroring for you!**
+**This library does not do the mirroring or screen recording for you!**
 
-Just drop in our replacement `UIWindow` subclass and your app will automatically determine when an external screen is available. It will show every touch on-screen with a nice partially-transparent graphic that automatically fades out when the touch ends.
+Just drop in our replacement `UIWindow` subclass and your app will automatically determine when you are in the screen recording or an external screen is available. It will show every touch on-screen with a nice partially-transparent graphic that automatically fades out when the touch ends.
 
 If you are using storyboards, the easiest way to integrate Fingertips is to override the `window` method of your application delegate like this:
 
@@ -21,6 +21,13 @@ If you are using storyboards, the easiest way to integrate Fingertips is to over
 	}
 	return _window;
 }
+```
+
+
+```swift
+// AppDelegate.swift (Swift)
+
+var window: UIWindow? = FingerTipWindow(frame: UIScreen.main.bounds)
 ```
 
 For iOS 13+ with UISceneDelegate:
@@ -38,12 +45,6 @@ func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options conn
 	windows.append(window)
 }
 
-```
-
-```swift
-// AppDelegate.swift (Swift)
-
-var window: UIWindow? = FingerTipWindow(frame: UIScreen.main.bounds)
 ```
 
 Fingertips require iOS 11.0 or greater and ARC. It uses **no private API** and is safe for App Store submissions.
