@@ -82,7 +82,7 @@ public class FingerTipWindow: UIWindow {
                     _overlayWindow = FingerTipOverlayWindow(frame: frame)
                 }
                 _overlayWindow?.isUserInteractionEnabled = false
-                _overlayWindow?.windowLevel = UIWindow.Level.statusBar
+                _overlayWindow?.windowLevel = .statusBar
                 _overlayWindow?.backgroundColor = .clear
                 _overlayWindow?.isHidden = false
             }
@@ -109,6 +109,7 @@ public class FingerTipWindow: UIWindow {
         commonInit()
     }
 
+
     @available(iOS 13.0, *)
     public override init(windowScene: UIWindowScene) {
         super.init(windowScene: windowScene)
@@ -124,14 +125,6 @@ public class FingerTipWindow: UIWindow {
         }
 
         updateFingertipsAreActive()
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: UIScreen.didConnectNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIScreen.didDisconnectNotification, object: nil)
-        if #available(iOS 11.0, *) {
-            NotificationCenter.default.removeObserver(self, name: UIScreen.capturedDidChangeNotification, object: nil)
-        }
     }
 
     func anyScreenIsCaptured() -> Bool {
@@ -155,45 +148,47 @@ public class FingerTipWindow: UIWindow {
     }
 
     public override func sendEvent(_ event: UIEvent) {
-        if active {
-            guard let allTouches: Set<UITouch> = event.allTouches else { return }
-
-            for touch in allTouches {
-                switch touch.phase {
-                case .began, .moved, .stationary:
-                    var touchView = overlayWindow.viewWithTag(touch.hashValue) as? FingerTipView
-
-                    if touch.phase != .stationary && touchView != nil && touchView?.fadingOut == true {
-                        touchView?.removeFromSuperview()
-                        touchView = nil
-                    }
-
-                    if touchView == nil && touch.phase != .stationary {
-                        touchView = FingerTipView(image: touchImage)
-                        overlayWindow.addSubview(touchView!)
-                    }
-
-                    if touchView?.fadingOut == false {
-                        touchView?.alpha = touchAlpha
-                        touchView?.center = touch.location(in: overlayWindow)
-                        touchView?.tag = touch.hashValue
-                        touchView?.timestamp = touch.timestamp
-                        touchView?.shouldAutomaticallyRemoveAfterTimeout = shouldAutomaticallyRemoveFingerTip(for: touch)
-                    }
-                    break
-                case .ended, .cancelled:
-                    removeFingerTip(with: touch.hashValue, animated: true)
-                    break
-                case .regionEntered, .regionMoved, .regionExited:
-                    fallthrough
-                @unknown default:
-                    break
-                }
-            }
+        defer {
+            super.sendEvent(event)
+            scheduleFingerTipRemoval()
         }
 
-        super.sendEvent(event)
-        scheduleFingerTipRemoval()
+        guard active else { return }
+
+        guard let allTouches: Set<UITouch> = event.allTouches else { return }
+
+        for touch in allTouches {
+            switch touch.phase {
+            case .began, .moved, .stationary:
+                var touchView = overlayWindow.viewWithTag(touch.hashValue) as? FingerTipView
+
+                if touch.phase != .stationary && touchView != nil && touchView?.fadingOut == true {
+                    touchView?.removeFromSuperview()
+                    touchView = nil
+                }
+
+                if touchView == nil && touch.phase != .stationary {
+                    touchView = FingerTipView(image: touchImage)
+                    overlayWindow.addSubview(touchView!)
+                }
+
+                if touchView?.fadingOut == false {
+                    touchView?.alpha = touchAlpha
+                    touchView?.center = touch.location(in: overlayWindow)
+                    touchView?.tag = touch.hashValue
+                    touchView?.timestamp = touch.timestamp
+                    touchView?.shouldAutomaticallyRemoveAfterTimeout = shouldAutomaticallyRemoveFingerTip(for: touch)
+                }
+                break
+            case .ended, .cancelled:
+                removeFingerTip(with: touch.hashValue, animated: true)
+                break
+            case .regionEntered, .regionMoved, .regionExited:
+                fallthrough
+            @unknown default:
+                break
+            }
+        }
     }
 
     func scheduleFingerTipRemoval() {
@@ -207,7 +202,9 @@ public class FingerTipWindow: UIWindow {
 
     func cancelScheduledFingerTipRemoval() {
         fingerTipRemovalScheduled = true
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(removeInactiveFingerTips), object: nil)
+        NSObject.cancelPreviousPerformRequests(withTarget: self,
+                                               selector: #selector(removeInactiveFingerTips),
+                                               object: nil)
     }
 
     @objc func removeInactiveFingerTips() {
@@ -249,21 +246,22 @@ public class FingerTipWindow: UIWindow {
     }
 
     func shouldAutomaticallyRemoveFingerTip(for touch: UITouch) -> Bool {
-
         var view = touch.view
         view = view?.hitTest(touch.location(in: view), with: nil)
 
         while view != nil {
-            if view is UITableViewCell {
+            switch view {
+            case is UITableViewCell:
                 for recognizer in touch.gestureRecognizers ?? [] {
                     if recognizer is UISwipeGestureRecognizer {
                         return true
                     }
                 }
-            } else if view is UITableView {
+            case is UITableView:
                 if touch.gestureRecognizers?.count == 0 {
                     return true
                 }
+            default: break
             }
 
             view = view?.superview
