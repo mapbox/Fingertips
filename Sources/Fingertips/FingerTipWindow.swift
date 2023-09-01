@@ -24,7 +24,7 @@ class FingerTipOverlayWindow: UIWindow {
 }
 
 @objc (MBXFingerTipWindow)
-public class FingerTipWindow: UIWindow {
+open class FingerTipWindow: UIWindow {
 
     public static var fingerTipWindow: FingerTipWindow? {
         return UIApplication.shared.windows.compactMap({ $0 as? FingerTipWindow }).first
