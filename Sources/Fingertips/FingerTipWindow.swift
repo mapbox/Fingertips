@@ -11,17 +11,7 @@ class FingerTipView: UIImageView {
 }
 
 @objc (MBXFingerTipOverlayWindow)
-class FingerTipOverlayWindow: UIWindow {
-    override var rootViewController: UIViewController? {
-        set {
-            super.rootViewController = newValue
-        }
-
-        get {
-            return FingerTipWindow.fingerTipWindow?.rootViewController ?? super.rootViewController
-        }
-    }
-}
+class FingerTipOverlayWindow: UIWindow {}
 
 @objc (MBXFingerTipWindow)
 open class FingerTipWindow: UIWindow {
