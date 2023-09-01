@@ -187,8 +187,6 @@ open class FingerTipWindow: UIWindow {
             case .ended, .cancelled, .regionExited:
                 removeFingerTip(with: touch.hashValue, animated: true)
                 break
-            case .regionEntered, .regionMoved, .regionExited:
-                fallthrough
             @unknown default:
                 break
             }
