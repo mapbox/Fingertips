@@ -163,7 +163,7 @@ open class FingerTipWindow: UIWindow {
 
         for touch in allTouches {
             switch touch.phase {
-            case .began, .moved, .stationary, .regionEntered, .regionMoved:
+            case .began, .moved, .stationary:
                 var touchView = overlayWindow.viewWithTag(touch.hashValue) as? FingerTipView
 
                 if touch.phase != .stationary && touchView != nil && touchView?.fadingOut == true {
@@ -184,9 +184,10 @@ open class FingerTipWindow: UIWindow {
                     touchView?.shouldAutomaticallyRemoveAfterTimeout = shouldAutomaticallyRemoveFingerTip(for: touch)
                 }
                 break
-            case .ended, .cancelled, .regionExited:
+            case .ended, .cancelled:
                 removeFingerTip(with: touch.hashValue, animated: true)
                 break
+            case .regionEntered, .regionMoved, .regionExited:
             @unknown default:
                 break
             }
