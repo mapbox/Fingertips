@@ -62,28 +62,20 @@ open class FingerTipWindow: UIWindow {
         return _touchImage!
     }
 
-    private var _overlayWindow: UIWindow?
-    var overlayWindow: UIWindow {
-        get {
-            if _overlayWindow == nil {
-                if #available(iOS 13.0, *), let windowScene = windowScene {
-                    _overlayWindow = FingerTipOverlayWindow(windowScene: windowScene)
-                } else {
-                    _overlayWindow = FingerTipOverlayWindow(frame: frame)
-                }
-                _overlayWindow?.isUserInteractionEnabled = false
-                _overlayWindow?.windowLevel = .statusBar
-                _overlayWindow?.backgroundColor = .clear
-                _overlayWindow?.isHidden = false
-            }
-
-            return _overlayWindow!
+    lazy var overlayWindow: UIWindow = {
+        let window: UIWindow
+        if #available(iOS 13.0, *), let windowScene = windowScene {
+            window = FingerTipOverlayWindow(windowScene: windowScene)
+        } else {
+            window = FingerTipOverlayWindow(frame: frame)
         }
+        window.isUserInteractionEnabled = false
+        window.windowLevel = .statusBar
+        window.backgroundColor = .clear
+        window.isHidden = false
+        return window
+    }()
 
-        set {
-            _overlayWindow = newValue
-        }
-    }
     var action: Bool?
     var fingerTipRemovalScheduled: Bool = false
 
