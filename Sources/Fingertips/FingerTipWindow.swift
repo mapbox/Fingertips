@@ -27,7 +27,7 @@ open class FingerTipWindow: UIWindow {
 
     private var active: Bool = false
 
-    // if set to 'true' the touches are shown even when no external screen is connected
+    /// Force touch display when no external screen is connected or no video recording is going
     public var alwaysShowTouches: Bool = false {
         didSet {
             if oldValue != alwaysShowTouches {
@@ -36,60 +36,41 @@ open class FingerTipWindow: UIWindow {
         }
     }
 
-    private var _touchImage: UIImage? = nil
-    var touchImage: UIImage {
-        if _touchImage == nil {
-            let clipPath = UIBezierPath(rect: CGRect(x: 0, y: 0, width: 50, height: 50))
+    lazy var touchImage: UIImage = {
+        let clipPath = UIBezierPath(rect: CGRect(x: 0, y: 0, width: 50, height: 50))
 
-            UIGraphicsBeginImageContextWithOptions(clipPath.bounds.size, false, 0)
+        UIGraphicsBeginImageContextWithOptions(clipPath.bounds.size, false, 0)
+        defer { UIGraphicsEndImageContext() }
 
-            let drawPath = UIBezierPath(arcCenter: CGPoint(x: 25, y: 25), radius: 22, startAngle: 0, endAngle: 2 * CGFloat.pi, clockwise: true)
-            drawPath.lineWidth = 2
+        let drawPath = UIBezierPath(arcCenter: CGPoint(x: 25, y: 25), radius: 22, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
+        drawPath.lineWidth = 2
 
-            strokeColor.setStroke()
-            fillColor.setFill()
+        strokeColor.setStroke()
+        fillColor.setFill()
 
-            drawPath.stroke()
-            drawPath.fill()
+        drawPath.stroke()
+        drawPath.fill()
 
-            clipPath.addClip()
+        clipPath.addClip()
 
-            _touchImage = UIGraphicsGetImageFromCurrentImageContext()
+        return UIGraphicsGetImageFromCurrentImageContext()!
+    }()
 
-            UIGraphicsEndImageContext()
+    lazy var overlayWindow: UIWindow = {
+        let window: UIWindow
+        if #available(iOS 13.0, *), let windowScene = windowScene {
+            window = FingerTipOverlayWindow(windowScene: windowScene)
+        } else {
+            window = FingerTipOverlayWindow(frame: frame)
         }
+        window.isUserInteractionEnabled = false
+        window.windowLevel = .statusBar
+        window.backgroundColor = .clear
+        window.isHidden = false
+        return window
+    }()
 
-        return _touchImage!
-    }
-
-    private var _overlayWindow: UIWindow?
-    var overlayWindow: UIWindow {
-        get {
-            if _overlayWindow == nil {
-                if #available(iOS 13.0, *), let windowScene = windowScene {
-                    _overlayWindow = FingerTipOverlayWindow(windowScene: windowScene)
-                } else {
-                    _overlayWindow = FingerTipOverlayWindow(frame: frame)
-                }
-                _overlayWindow?.isUserInteractionEnabled = false
-                _overlayWindow?.windowLevel = .statusBar
-                _overlayWindow?.backgroundColor = .clear
-                _overlayWindow?.isHidden = false
-            }
-
-            return _overlayWindow!
-        }
-
-        set {
-            _overlayWindow = newValue
-        }
-    }
-    var action: Bool?
     var fingerTipRemovalScheduled: Bool = false
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -103,7 +84,6 @@ open class FingerTipWindow: UIWindow {
         commonInit()
     }
 
-
     @available(iOS 13.0, *)
     public override init(windowScene: UIWindowScene) {
         super.init(windowScene: windowScene)
@@ -114,21 +94,13 @@ open class FingerTipWindow: UIWindow {
     func commonInit() {
         NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.didConnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.didDisconnectNotification, object: nil)
-        if #available(iOS 11.0, *) {
-            NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.capturedDidChangeNotification, object: nil)
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.capturedDidChangeNotification, object: nil)
 
         updateFingertipsAreActive()
     }
 
     func anyScreenIsCaptured() -> Bool {
-        let capturedScreen: UIScreen?
-        if #available(iOS 11.0, *) {
-            capturedScreen = UIScreen.screens.first(where: \.isCaptured)
-        } else {
-            capturedScreen = UIScreen.screens.first(where: { $0.mirrored != nil })
-        }
-        return capturedScreen != nil
+        UIScreen.screens.contains(where: \.isCaptured)
     }
 
     @objc func updateFingertipsAreActive() {
@@ -200,11 +172,9 @@ open class FingerTipWindow: UIWindow {
         let now = ProcessInfo.processInfo.systemUptime
         let REMOVAL_DELAY = 0.2
 
-        for touchView in overlayWindow.subviews {
-            if let touchView = touchView as? FingerTipView {
-                if touchView.shouldAutomaticallyRemoveAfterTimeout == true && now > touchView.timestamp ?? 0 + REMOVAL_DELAY {
-                    removeFingerTip(with: touchView.tag, animated: true)
-                }
+        for case let touchView as FingerTipView in overlayWindow.subviews {
+            if touchView.shouldAutomaticallyRemoveAfterTimeout == true && now > touchView.timestamp ?? 0 + REMOVAL_DELAY {
+                removeFingerTip(with: touchView.tag, animated: true)
             }
         }
 
@@ -214,32 +184,19 @@ open class FingerTipWindow: UIWindow {
     }
 
     func removeFingerTip(with hash: Int, animated: Bool) {
-        guard let touchView = overlayWindow.viewWithTag(hash) as? FingerTipView else { return }
+        guard let touchView = overlayWindow.viewWithTag(hash) as? FingerTipView, !touchView.fadingOut else { return }
 
-        if touchView.fadingOut == true {
-            return
-        }
-
-        let animation = {
+        UIView.animate(withDuration: animated ? fadeDuration : 0) {
+            touchView.fadingOut = true
             touchView.alpha = 0
             touchView.frame = CGRect(x: touchView.center.x - touchView.frame.size.width / 1.5,
                                      y: touchView.center.y - touchView.frame.size.height / 1.5,
                                      width: touchView.frame.size.width * 1.5,
                                      height: touchView.frame.size.height * 1.5)
-        }
 
-        let completion: (Bool) -> () = { _ in
+        } completion: { _ in
             touchView.fadingOut = false
             touchView.removeFromSuperview()
-        }
-
-        touchView.fadingOut = true
-
-        if animated {
-            UIView.animate(withDuration: fadeDuration, animations: animation, completion: completion)
-        } else {
-            animation()
-            completion(true)
         }
     }
 
