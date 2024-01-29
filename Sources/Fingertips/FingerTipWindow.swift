@@ -79,10 +79,6 @@ open class FingerTipWindow: UIWindow {
     var action: Bool?
     var fingerTipRemovalScheduled: Bool = false
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
