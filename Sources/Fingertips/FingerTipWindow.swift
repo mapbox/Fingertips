@@ -172,11 +172,9 @@ open class FingerTipWindow: UIWindow {
         let now = ProcessInfo.processInfo.systemUptime
         let REMOVAL_DELAY = 0.2
 
-        for touchView in overlayWindow.subviews {
-            if let touchView = touchView as? FingerTipView {
-                if touchView.shouldAutomaticallyRemoveAfterTimeout == true && now > touchView.timestamp ?? 0 + REMOVAL_DELAY {
-                    removeFingerTip(with: touchView.tag, animated: true)
-                }
+        for case let touchView as FingerTipView in overlayWindow.subviews {
+            if touchView.shouldAutomaticallyRemoveAfterTimeout == true && now > touchView.timestamp ?? 0 + REMOVAL_DELAY {
+                removeFingerTip(with: touchView.tag, animated: true)
             }
         }
 
