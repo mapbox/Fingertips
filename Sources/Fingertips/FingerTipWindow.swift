@@ -184,32 +184,19 @@ open class FingerTipWindow: UIWindow {
     }
 
     func removeFingerTip(with hash: Int, animated: Bool) {
-        guard let touchView = overlayWindow.viewWithTag(hash) as? FingerTipView else { return }
+        guard let touchView = overlayWindow.viewWithTag(hash) as? FingerTipView, !touchView.fadingOut else { return }
 
-        if touchView.fadingOut == true {
-            return
-        }
-
-        let animation = {
+        UIView.animate(withDuration: animated ? fadeDuration : 0) {
+            touchView.fadingOut = true
             touchView.alpha = 0
             touchView.frame = CGRect(x: touchView.center.x - touchView.frame.size.width / 1.5,
                                      y: touchView.center.y - touchView.frame.size.height / 1.5,
                                      width: touchView.frame.size.width * 1.5,
                                      height: touchView.frame.size.height * 1.5)
-        }
 
-        let completion: (Bool) -> () = { _ in
+        } completion: { _ in
             touchView.fadingOut = false
             touchView.removeFromSuperview()
-        }
-
-        touchView.fadingOut = true
-
-        if animated {
-            UIView.animate(withDuration: fadeDuration, animations: animation, completion: completion)
-        } else {
-            animation()
-            completion(true)
         }
     }
 
