@@ -36,31 +36,25 @@ open class FingerTipWindow: UIWindow {
         }
     }
 
-    private var _touchImage: UIImage? = nil
-    var touchImage: UIImage {
-        if _touchImage == nil {
-            let clipPath = UIBezierPath(rect: CGRect(x: 0, y: 0, width: 50, height: 50))
+    lazy var touchImage: UIImage = {
+        let clipPath = UIBezierPath(rect: CGRect(x: 0, y: 0, width: 50, height: 50))
 
-            UIGraphicsBeginImageContextWithOptions(clipPath.bounds.size, false, 0)
+        UIGraphicsBeginImageContextWithOptions(clipPath.bounds.size, false, 0)
+        defer { UIGraphicsEndImageContext() }
 
-            let drawPath = UIBezierPath(arcCenter: CGPoint(x: 25, y: 25), radius: 22, startAngle: 0, endAngle: 2 * CGFloat.pi, clockwise: true)
-            drawPath.lineWidth = 2
+        let drawPath = UIBezierPath(arcCenter: CGPoint(x: 25, y: 25), radius: 22, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
+        drawPath.lineWidth = 2
 
-            strokeColor.setStroke()
-            fillColor.setFill()
+        strokeColor.setStroke()
+        fillColor.setFill()
 
-            drawPath.stroke()
-            drawPath.fill()
+        drawPath.stroke()
+        drawPath.fill()
 
-            clipPath.addClip()
+        clipPath.addClip()
 
-            _touchImage = UIGraphicsGetImageFromCurrentImageContext()
-
-            UIGraphicsEndImageContext()
-        }
-
-        return _touchImage!
-    }
+        return UIGraphicsGetImageFromCurrentImageContext()!
+    }()
 
     lazy var overlayWindow: UIWindow = {
         let window: UIWindow
@@ -89,7 +83,6 @@ open class FingerTipWindow: UIWindow {
 
         commonInit()
     }
-
 
     @available(iOS 13.0, *)
     public override init(windowScene: UIWindowScene) {
