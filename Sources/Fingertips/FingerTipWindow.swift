@@ -27,7 +27,7 @@ open class FingerTipWindow: UIWindow {
 
     private var active: Bool = false
 
-    // if set to 'true' the touches are shown even when no external screen is connected
+    /// Force touch display when no external screen is connected or no video recording is going
     public var alwaysShowTouches: Bool = false {
         didSet {
             if oldValue != alwaysShowTouches {
