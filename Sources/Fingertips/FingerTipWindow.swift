@@ -107,7 +107,7 @@ open class FingerTipWindow: UIWindow {
     }
 
     func anyScreenIsCaptured() -> Bool {
-        UIScreen.screens.first(where: \.isCaptured) != nil
+        UIScreen.screens.contains(where: \.isCaptured)
     }
 
     @objc func updateFingertipsAreActive() {
