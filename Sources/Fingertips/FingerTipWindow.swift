@@ -11,20 +11,10 @@ class FingerTipView: UIImageView {
 }
 
 @objc (MBXFingerTipOverlayWindow)
-class FingerTipOverlayWindow: UIWindow {
-    override var rootViewController: UIViewController? {
-        set {
-            super.rootViewController = newValue
-        }
-
-        get {
-            return FingerTipWindow.fingerTipWindow?.rootViewController ?? super.rootViewController
-        }
-    }
-}
+class FingerTipOverlayWindow: UIWindow {}
 
 @objc (MBXFingerTipWindow)
-public class FingerTipWindow: UIWindow {
+open class FingerTipWindow: UIWindow {
 
     public static var fingerTipWindow: FingerTipWindow? {
         return UIApplication.shared.windows.compactMap({ $0 as? FingerTipWindow }).first
@@ -97,7 +87,11 @@ public class FingerTipWindow: UIWindow {
     var action: Bool?
     var fingerTipRemovalScheduled: Bool = false
 
-    required init?(coder aDecoder: NSCoder) {
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
         commonInit()
@@ -200,13 +194,6 @@ public class FingerTipWindow: UIWindow {
         perform(#selector(removeInactiveFingerTips), with: nil, afterDelay: 0.1)
     }
 
-    func cancelScheduledFingerTipRemoval() {
-        fingerTipRemovalScheduled = true
-        NSObject.cancelPreviousPerformRequests(withTarget: self,
-                                               selector: #selector(removeInactiveFingerTips),
-                                               object: nil)
-    }
-
     @objc func removeInactiveFingerTips() {
         fingerTipRemovalScheduled = false
 
@@ -233,7 +220,7 @@ public class FingerTipWindow: UIWindow {
             return
         }
 
-        UIView.animate(withDuration: fadeDuration) {
+        let animation = {
             touchView.alpha = 0
             touchView.frame = CGRect(x: touchView.center.x - touchView.frame.size.width / 1.5,
                                      y: touchView.center.y - touchView.frame.size.height / 1.5,
@@ -241,8 +228,19 @@ public class FingerTipWindow: UIWindow {
                                      height: touchView.frame.size.height * 1.5)
         }
 
+        let completion: (Bool) -> () = { _ in
+            touchView.fadingOut = false
+            touchView.removeFromSuperview()
+        }
+
         touchView.fadingOut = true
-        touchView.perform(#selector(removeFromSuperview), with: nil, afterDelay: fadeDuration)
+
+        if animated {
+            UIView.animate(withDuration: fadeDuration, animations: animation, completion: completion)
+        } else {
+            animation()
+            completion(true)
+        }
     }
 
     func shouldAutomaticallyRemoveFingerTip(for touch: UITouch) -> Bool {
