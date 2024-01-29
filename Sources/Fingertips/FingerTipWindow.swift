@@ -76,7 +76,6 @@ open class FingerTipWindow: UIWindow {
         return window
     }()
 
-    var action: Bool?
     var fingerTipRemovalScheduled: Bool = false
 
     required public init?(coder aDecoder: NSCoder) {
