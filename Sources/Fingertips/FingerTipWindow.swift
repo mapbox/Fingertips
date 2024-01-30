@@ -92,15 +92,21 @@ open class FingerTipWindow: UIWindow {
     }
 
     func commonInit() {
+#if !(swift(>=5.9) && os(visionOS))
         NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.didConnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.didDisconnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateFingertipsAreActive), name: UIScreen.capturedDidChangeNotification, object: nil)
+#endif
 
         updateFingertipsAreActive()
     }
 
     func anyScreenIsCaptured() -> Bool {
+#if !(swift(>=5.9) && os(visionOS))
         UIScreen.screens.contains(where: \.isCaptured)
+#else
+        false
+#endif
     }
 
     @objc func updateFingertipsAreActive() {
