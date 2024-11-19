@@ -56,6 +56,10 @@ open class FingerTipWindow: UIWindow {
         return UIGraphicsGetImageFromCurrentImageContext()!
     }()
 
+    private var overlayView: UIView {
+        return overlayWindow.rootViewController!.view
+    }
+
     lazy var overlayWindow: UIWindow = {
         let window: UIWindow
         if #available(iOS 13.0, *), let windowScene = windowScene {
@@ -63,6 +67,7 @@ open class FingerTipWindow: UIWindow {
         } else {
             window = FingerTipOverlayWindow(frame: frame)
         }
+        window.rootViewController = UIViewController()
         window.isUserInteractionEnabled = false
         window.windowLevel = .statusBar
         window.backgroundColor = .clear
@@ -126,7 +131,7 @@ open class FingerTipWindow: UIWindow {
         for touch in allTouches {
             switch touch.phase {
             case .began, .moved, .stationary:
-                var touchView = overlayWindow.viewWithTag(touch.hashValue) as? FingerTipView
+                var touchView = overlayView.viewWithTag(touch.hashValue) as? FingerTipView
 
                 if touch.phase != .stationary && touchView != nil && touchView?.fadingOut == true {
                     touchView?.removeFromSuperview()
@@ -135,22 +140,24 @@ open class FingerTipWindow: UIWindow {
 
                 if touchView == nil && touch.phase != .stationary {
                     touchView = FingerTipView(image: touchImage)
-                    overlayWindow.addSubview(touchView!)
+                    touchView?.translatesAutoresizingMaskIntoConstraints = false
+                    overlayView.addSubview(touchView!)
                 }
 
                 if touchView?.fadingOut == false {
                     touchView?.alpha = touchAlpha
-                    touchView?.center = touch.location(in: overlayWindow)
+                    touchView?.center = touch.location(in: overlayView)
                     touchView?.tag = touch.hashValue
                     touchView?.timestamp = touch.timestamp
                     touchView?.shouldAutomaticallyRemoveAfterTimeout = shouldAutomaticallyRemoveFingerTip(for: touch)
                 }
-                break
+
             case .ended, .cancelled:
                 removeFingerTip(with: touch.hashValue, animated: true)
-                break
+
             case .regionEntered, .regionMoved, .regionExited:
                 fallthrough
+
             @unknown default:
                 break
             }
@@ -172,19 +179,19 @@ open class FingerTipWindow: UIWindow {
         let now = ProcessInfo.processInfo.systemUptime
         let REMOVAL_DELAY = 0.2
 
-        for case let touchView as FingerTipView in overlayWindow.subviews {
+        for case let touchView as FingerTipView in overlayView.subviews {
             if touchView.shouldAutomaticallyRemoveAfterTimeout == true && now > touchView.timestamp ?? 0 + REMOVAL_DELAY {
                 removeFingerTip(with: touchView.tag, animated: true)
             }
         }
 
-        if overlayWindow.subviews.count > 0 {
+        if overlayView.subviews.count > 0 {
             scheduleFingerTipRemoval()
         }
     }
 
     func removeFingerTip(with hash: Int, animated: Bool) {
-        guard let touchView = overlayWindow.viewWithTag(hash) as? FingerTipView, !touchView.fadingOut else { return }
+        guard let touchView = overlayView.viewWithTag(hash) as? FingerTipView, !touchView.fadingOut else { return }
 
         UIView.animate(withDuration: animated ? fadeDuration : 0) {
             touchView.fadingOut = true
