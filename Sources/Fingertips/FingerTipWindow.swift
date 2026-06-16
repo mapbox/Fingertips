@@ -10,10 +10,10 @@ class FingerTipView: UIImageView {
     var fadingOut: Bool = false
 }
 
-@objc (MBXFingerTipOverlayWindow)
+@objc(MBXFingerTipOverlayWindow)
 class FingerTipOverlayWindow: UIWindow {}
 
-@objc (MBXFingerTipWindow)
+@objc(MBXFingerTipWindow)
 open class FingerTipWindow: UIWindow {
 
     public static var fingerTipWindow: FingerTipWindow? {
